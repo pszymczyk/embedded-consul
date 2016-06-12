@@ -17,7 +17,7 @@ class ConsulStarterTest extends Specification {
     ConsulProcess consul
 
     def setup() {
-        consul = new ConsulStarter().start()
+        consul = ConsulStarterBuilder.consulStarter().build().start()
     }
 
     def cleanup() {

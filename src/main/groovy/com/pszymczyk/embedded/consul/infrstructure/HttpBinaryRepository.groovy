@@ -2,7 +2,6 @@ package com.pszymczyk.embedded.consul.infrstructure
 
 public class HttpBinaryRepository {
 
-    @Override
     public File getConsulBinaryArchive(File file) {
         String os = OsResolver.resolve()
         String url = "https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_${os}_amd64.zip"
