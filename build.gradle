@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:0.9.5'
+    }
+}
+
+apply plugin: 'axion-release'
+apply plugin: 'groovy'
+
+group 'com.pszymczyk.embedded.consul'
+scmVersion {
+    tag {
+        prefix = 'embedded-consul'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.1'
+    compile 'org.apache.ant:ant:1.9.4'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'com.jayway.awaitility:awaitility:1.7.0'
+    testCompile 'com.squareup.okhttp3:okhttp:3.3.1'
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
