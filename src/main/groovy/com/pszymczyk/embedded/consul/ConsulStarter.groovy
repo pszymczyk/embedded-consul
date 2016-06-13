@@ -7,9 +7,11 @@ import java.nio.file.Path
 
 class ConsulStarter {
 
-    private Path dataDir
-    private Path downloadDir
-    private int httpPort
+    private final Path dataDir
+    private final Path downloadDir
+    private final int httpPort
+
+    private boolean started = false
 
     private HttpBinaryRepository binaryRepository
     private AntUnzip unzip
@@ -27,7 +29,11 @@ class ConsulStarter {
     }
 
     public ConsulProcess start() {
-        String downladDirAsString = downloadDir.toAbsolutePath().toString()
+        if (started) {
+            throw new ConsulAlreadyStartedException()
+        }
+        started = true
+        String downloadDirAsString = downloadDir.toAbsolutePath().toString()
         File file = new File(downloadDir.toAbsolutePath().toString(), 'consul.zip')
 
         File archive = binaryRepository.getConsulBinaryArchive(file)
@@ -36,7 +42,7 @@ class ConsulStarter {
         return new ConsulProcess(dataDir: dataDir, httpPort: httpPort,
                 process: new ProcessBuilder()
                         .directory(downloadDir.toFile())
-                        .command("$downladDirAsString/consul agent -data-dir=$dataDir -server -bootstrap -node=consul-test-node -advertise=127.0.0.1 -http-port $httpPort".split(' '))
+                        .command("$downloadDirAsString/consul agent -data-dir=$dataDir -server -bootstrap -node=consul-test-node -advertise=127.0.0.1 -http-port $httpPort".split(' '))
                         .inheritIO()
                         .start())
     }

@@ -41,7 +41,7 @@ class ConsulStarterBuilder {
         return new ConsulStarter(dataDir, downloadDir, httpPort)
     }
 
-    void applyDefaults() {
+    private void applyDefaults() {
         if (downloadDir == null) {
             downloadDir = Files.createTempDirectory('embedded-consul')
         }
