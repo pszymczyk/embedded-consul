@@ -14,7 +14,9 @@ apply plugin: 'axion-release'
 apply plugin: 'groovy'
 apply from: 'publish.gradle'
 
-group 'com.pszymczyk.embedded.consul'
+project.group = 'com.pszymczyk.embedded.consul'
+project.version = scmVersion.version
+
 scmVersion {
     tag {
         prefix = 'embedded-consul'

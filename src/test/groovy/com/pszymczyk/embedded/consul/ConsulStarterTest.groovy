@@ -46,7 +46,6 @@ class ConsulStarterTest extends Specification {
         ConsulClient consulClient2 = new ConsulClient("localhost", consul2.httpPort)
 
         when:
-
         consulClient1.agentServiceRegister(new NewService(id: "1", name: "consulClient1", address: "localhost", port: 8080))
         consulClient2.agentServiceRegister(new NewService(id: "1", name: "consulClient2", address: "localhost", port: 8080))
 
@@ -68,5 +67,9 @@ class ConsulStarterTest extends Specification {
                 false
             }
         })
+
+        cleanup:
+        consul1.close()
+        consul2.close()
     }
 }
