@@ -12,6 +12,7 @@ buildscript {
 
 apply plugin: 'axion-release'
 apply plugin: 'groovy'
+apply from: 'publish.gradle'
 
 group 'com.pszymczyk.embedded.consul'
 scmVersion {
