@@ -65,7 +65,7 @@ At the moment files are not deleted!.
   
 ### Simultaneous running 
 
-Embedded Consul override all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports). 
+Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports). 
 Ports are randomized so it's possible to run multiple Consul Agent instances in single machine. 
 Configuration file is stored in /$tmp/embedded-consul-data-dir$randomNumber/config.json, sample content:
   
