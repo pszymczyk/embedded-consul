@@ -46,11 +46,27 @@ class ConsulStarterTest extends Specification {
         ConsulClient consulClient2 = new ConsulClient("localhost", consul2.httpPort)
 
         when:
-        NewService newService = new NewService(id: "1", name: "testService", address: "localhost", port: 8080)
-        consulClient1.agentServiceRegister(newService)
+
+        consulClient1.agentServiceRegister(new NewService(id: "1", name: "consulClient1", address: "localhost", port: 8080))
+        consulClient2.agentServiceRegister(new NewService(id: "1", name: "consulClient2", address: "localhost", port: 8080))
 
         then:
-        consulClient1.getCatalogServices(QueryParams.DEFAULT).getValue().size() == 1
-        consulClient2.getCatalogServices(QueryParams.DEFAULT).getValue().size() == 0
+        await().atMost(30, TimeUnit.SECONDS).until({
+            try {
+                consulClient1.getCatalogServices(QueryParams.DEFAULT).getValue().size() == 1
+                consulClient1.getCatalogServices(QueryParams.DEFAULT).getValue().name == "consulClient1"
+            } catch (Exception e) {
+                false
+            }
+        })
+
+        await().atMost(30, TimeUnit.SECONDS).until({
+            try {
+                consulClient2.getCatalogServices(QueryParams.DEFAULT).getValue().size() == 1
+                consulClient2.getCatalogServices(QueryParams.DEFAULT).getValue().name == "consulClient2"
+            } catch (Exception e) {
+                false
+            }
+        })
     }
 }

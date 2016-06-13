@@ -11,6 +11,8 @@ class ConsulStarterBuilder {
 
     private Path dataDir
     private Path downloadDir
+    private File portsConfigFile
+    private LogLevel logLevel = LogLevel.ERR
     private Integer httpPort
 
     private ConsulStarterBuilder() {
@@ -19,6 +21,11 @@ class ConsulStarterBuilder {
 
     public static ConsulStarterBuilder consulStarter() {
         return new ConsulStarterBuilder()
+    }
+
+    public ConsulStarterBuilder withLogLevel(LogLevel logLevel) {
+        this.logLevel = logLevel
+        this
     }
 
     public ConsulStarterBuilder withDataDirectory(Path dataDir) {
@@ -31,6 +38,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    public ConsulStarterBuilder withPortsConfigFile(File file) {
+        this.portsConfigFile = file
+        this
+    }
+
     public ConsulStarterBuilder withHttpPort(int httpPort) {
         this.httpPort = httpPort
         this
@@ -38,16 +50,21 @@ class ConsulStarterBuilder {
 
     public ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir, downloadDir, httpPort)
+        return new ConsulStarter(dataDir, downloadDir, portsConfigFile, logLevel, httpPort)
     }
 
     private void applyDefaults() {
         if (downloadDir == null) {
-            downloadDir = Files.createTempDirectory('embedded-consul')
+            downloadDir = Paths.get(Files.createTempDirectory('').parent.toString(), 'embedded-consul')
+            Files.createDirectories(downloadDir)
         }
 
         if (dataDir == null) {
-            dataDir = Paths.get(downloadDir.toAbsolutePath().toString(), "data-dir")
+            dataDir = Files.createTempDirectory("embedded-consul-data-dir")
+        }
+
+        if (portsConfigFile == null) {
+            portsConfigFile = new File(dataDir.toFile(), "config.json")
         }
 
         if (httpPort == null) {
