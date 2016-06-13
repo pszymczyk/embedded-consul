@@ -3,10 +3,14 @@ package com.pszymczyk.embedded.consul
 import com.pszymczyk.embedded.consul.infrstructure.AntUnzip
 import com.pszymczyk.embedded.consul.infrstructure.HttpBinaryRepository
 import com.pszymczyk.embedded.consul.infrstructure.Ports
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.nio.file.Path
 
 class ConsulStarter {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class);
 
     private final Path dataDir
     private final Path downloadDir
@@ -34,7 +38,10 @@ class ConsulStarter {
     }
 
     public ConsulProcess start() {
+        logger.info("Starting new Consul process.")
+
         if (started) {
+            logger.error("Consul process already started!")
             throw new ConsulAlreadyStartedException()
         }
 
@@ -66,12 +73,16 @@ class ConsulStarter {
 
     private void downloadAndUnpackBinary() {
         File file = new File(downloadDir.toAbsolutePath().toString(), 'consul.zip')
+        logger.info("Downloading archives into: {}", file.toString())
 
         File archive = binaryRepository.getConsulBinaryArchive(file)
+
+        logger.info("Unzipping binaries into: {}", downloadDir.toString())
         unzip.unzip(archive, downloadDir.toFile())
     }
 
     private File createConfigFile() {
+        logger.info("Creating configuration file: {}", portsConfigFile.toString())
         int[] ports = Ports.nextAvailable(5)
 
         portsConfigFile << """
