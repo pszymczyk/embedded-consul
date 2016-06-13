@@ -58,7 +58,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 
 ```
 
-To avoid unnecessary downloads Consul binary is downloaded into static named directory /$tmp/embedded-consul. 
+To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul`. 
 Another stuff (ports config, raft, serf) is created in dynamically named temp directories.
 
 At the moment files are not deleted!.
@@ -67,7 +67,7 @@ At the moment files are not deleted!.
 
 Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports). 
 Ports are randomized so it's possible to run multiple Consul Agent instances in single machine. 
-Configuration file is stored in /$tmp/embedded-consul-data-dir$randomNumber/config.json, sample content:
+Configuration file is stored in `/$tmp/embedded-consul-data-dir$randomNumber/config.json`, sample content:
   
 ```javascript
     
