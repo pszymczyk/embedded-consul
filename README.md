@@ -9,13 +9,13 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.1.2-SNAPSHOT</version>
+      <version>0.1.2</version>
     </dependency>
 ```
 
 ``` javascript
 
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.2-SNAPSHOT'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.2'
 ```
 
 ### Usage
