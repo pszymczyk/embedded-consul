@@ -9,7 +9,7 @@ public class ConsulProcess implements AutoCloseable{
     Process process;
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         process.destroy();
     }
 }
