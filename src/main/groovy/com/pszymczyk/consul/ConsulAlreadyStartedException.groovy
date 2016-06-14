@@ -1,4 +1,4 @@
-package com.pszymczyk.embedded.consul
+package com.pszymczyk.consul
 
 
 class ConsulAlreadyStartedException extends RuntimeException {

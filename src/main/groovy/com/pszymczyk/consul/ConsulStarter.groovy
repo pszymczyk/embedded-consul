@@ -1,8 +1,8 @@
-package com.pszymczyk.embedded.consul
+package com.pszymczyk.consul
 
-import com.pszymczyk.embedded.consul.infrstructure.AntUnzip
-import com.pszymczyk.embedded.consul.infrstructure.HttpBinaryRepository
-import com.pszymczyk.embedded.consul.infrstructure.Ports
+import com.pszymczyk.consul.infrstructure.AntUnzip
+import com.pszymczyk.consul.infrstructure.HttpBinaryRepository
+import com.pszymczyk.consul.infrstructure.Ports
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

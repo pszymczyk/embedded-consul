@@ -1,4 +1,4 @@
-package com.pszymczyk.embedded.consul
+package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams

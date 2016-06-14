@@ -1,6 +1,6 @@
-package com.pszymczyk.embedded.consul
+package com.pszymczyk.consul
 
-import com.pszymczyk.embedded.consul.infrstructure.Ports
+import com.pszymczyk.consul.infrstructure.Ports
 
 import java.nio.file.Files
 import java.nio.file.Path

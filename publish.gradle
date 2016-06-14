@@ -1,64 +1,34 @@
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'io.codearte.nexus-staging'
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
+nexusStaging {
+    packageGroup = "com.pszymczyk.consul"
 }
 
-artifacts {
-    archives jar
-    archives sourcesJar
-}
+modifyPom {
+    project {
+        name 'Embedded Consul'
+        description 'Embedded Consul provides easy way to run Consul in integration tests.'
+        url 'https://github.com/pszymczyk/embedded-consul'
+        inceptionYear '2016'
 
-signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
+        scm {
+            url 'https://github.com/pszymczyk/embedded-consul'
+            connection 'git@github.com:pszymczyk/embedded-consul.git'
+            developerConnection 'git@github.com:pszymczyk/embedded-consul.git'
+        }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-
-            def release = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-            def snapshot = 'https://oss.sonatype.org/content/repositories/snapshots/'
-            repository(url: project.version.contains('SNAPSHOT') ? snapshot : release) {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
+        }
 
-            pom.project {
-                name 'Embedded Consul'
-                description 'Embedded Consul provides easy way to run Consul in integration tests.'
-                url 'https://github.com/pszymczyk/embedded-consul'
-                inceptionYear '2016'
-
-                scm {
-                    developerConnection 'git@github.com:pszymczyk/embedded-consul.git'
-                    connection 'git@github.com:pszymczyk/embedded-consul.git'
-                    url 'https://github.com/pszymczyk/embedded-consul.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'pszymczyk'
-                        name 'Pawel Szymczyk'
-                        email 'pawel.szymczyk90@gmail.com'
-                        roles {
-                            role 'Developer'
-                        }
-                        timezone '+1'
-                    }
-                }
+        developers {
+            developer {
+                id 'pszymczyk'
+                name 'Pawel Szymczyk'
             }
         }
     }

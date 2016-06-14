@@ -1,4 +1,4 @@
-package com.pszymczyk.embedded.consul;
+package com.pszymczyk.consul;
 
 import java.nio.file.Path;
 

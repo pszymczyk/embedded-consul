@@ -5,9 +5,9 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 ### Usage
 ``` java
 
-    import com.pszymczyk.embedded.consul.ConsulProcess;
-    import com.pszymczyk.embedded.consul.ConsulStarter;
-    import com.pszymczyk.embedded.consul.ConsulStarterBuilder;
+    import com.pszymczyk.consul.ConsulProcess;
+    import com.pszymczyk.consul.ConsulStarter;
+    import com.pszymczyk.consul.ConsulStarterBuilder;
     
     public class IntegrationTest {
     
