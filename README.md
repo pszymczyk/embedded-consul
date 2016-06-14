@@ -2,6 +2,22 @@
 
 Embedded Consul provides easy way to run Consul (by HashiCorp) in integration tests.
 
+### How to get it?
+
+``` xml
+    
+    <dependency>
+      <groupId>com.pszymczyk.consul</groupId>
+      <artifactId>embedded-consul</artifactId>
+      <version>0.1.2-SNAPSHOT</version>
+    </dependency>
+```
+
+``` javascript
+
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.2-SNAPSHOT'
+```
+
 ### Usage
 ``` java
 
