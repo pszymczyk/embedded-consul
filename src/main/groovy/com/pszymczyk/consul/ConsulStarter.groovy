@@ -1,8 +1,10 @@
 package com.pszymczyk.consul
 
 import com.pszymczyk.consul.infrstructure.AntUnzip
+import com.pszymczyk.consul.infrstructure.ConsulWaiter
 import com.pszymczyk.consul.infrstructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrstructure.Ports
+import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -39,11 +41,7 @@ class ConsulStarter {
 
     public ConsulProcess start() {
         logger.info("Starting new Consul process.")
-
-        if (started) {
-            logger.error("Consul process already started!")
-            throw new ConsulAlreadyStartedException()
-        }
+        checkInitialState()
 
         started = true
 
@@ -63,13 +61,27 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=$httpPort"]
 
-        return new ConsulProcess(dataDir: dataDir, httpPort: httpPort,
+        ConsulProcess process = new ConsulProcess(dataDir: dataDir, httpPort: httpPort,
                 process: new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
                         .inheritIO()
                         .start())
+
+        new ConsulWaiter(httpPort).await()
+
+        return process
     }
+
+    private void checkInitialState() {
+        if (started) throw new EmbeddedConsulException('This Consul Starter instance already started Consul process. Create new ConsulStarter instance')
+        try {
+            IOGroovyMethods.withCloseable(new Socket("localhost", httpPort), { it-> throw new EmbeddedConsulException("Port $httpPort is not available, cannot start Consul process.")})
+        } catch (IOException ex) {
+            // socket is free - everything ok
+        }
+    }
+
 
     private void downloadAndUnpackBinary() {
         File file = new File(downloadDir.toAbsolutePath().toString(), 'consul.zip')
