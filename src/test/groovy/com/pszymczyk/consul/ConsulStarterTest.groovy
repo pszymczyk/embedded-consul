@@ -72,4 +72,15 @@ class ConsulStarterTest extends Specification {
         consul1.close()
         consul2.close()
     }
+
+    def "should throw exception when try to run Consul on busy port"() {
+        when:
+        ConsulStarterBuilder.consulStarter().withHttpPort(consul.httpPort).build().start()
+
+        then:
+        def ex = thrown EmbeddedConsulException
+        ex.message =~ "Port $consul.httpPort is not available"
+
+
+    }
 }
