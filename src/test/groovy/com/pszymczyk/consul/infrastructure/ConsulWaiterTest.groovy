@@ -1,4 +1,4 @@
-package com.pszymczyk.consul.infrstructure
+package com.pszymczyk.consul.infrastructure
 
 import com.pszymczyk.consul.EmbeddedConsulException
 import spock.lang.Specification

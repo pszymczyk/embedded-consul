@@ -1,6 +1,6 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.infrstructure.Ports
+import com.pszymczyk.consul.infrastructure.Ports
 
 import java.nio.file.Files
 import java.nio.file.Path

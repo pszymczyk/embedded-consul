@@ -1,4 +1,4 @@
-package com.pszymczyk.consul.infrstructure
+package com.pszymczyk.consul.infrastructure
 
 import org.codehaus.groovy.runtime.IOGroovyMethods
 
