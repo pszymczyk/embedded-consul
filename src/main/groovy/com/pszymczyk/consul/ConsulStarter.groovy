@@ -1,9 +1,9 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.infrstructure.AntUnzip
-import com.pszymczyk.consul.infrstructure.ConsulWaiter
-import com.pszymczyk.consul.infrstructure.HttpBinaryRepository
-import com.pszymczyk.consul.infrstructure.Ports
+import com.pszymczyk.consul.infrastructure.AntUnzip
+import com.pszymczyk.consul.infrastructure.ConsulWaiter
+import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
+import com.pszymczyk.consul.infrastructure.Ports
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
