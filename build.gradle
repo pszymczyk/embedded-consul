@@ -33,6 +33,8 @@ dependencies {
     compile 'org.apache.ant:ant:1.9.4'
     compile 'org.slf4j:slf4j-api:1.7.2'
 
+    compileOnly 'junit:junit:4.12'
+
     testCompile 'com.ecwid.consul:consul-api:1.1.6'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'com.jayway.awaitility:awaitility:1.7.0'

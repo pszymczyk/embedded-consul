@@ -5,7 +5,6 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 ### How to get it?
 
 ``` xml
-    
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
@@ -13,44 +12,56 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
     </dependency>
 ```
 
-``` javascript
-
+``` groovy
     testCompile 'com.pszymczyk.consul:embedded-consul:0.1.2'
 ```
 
 ### Usage
+
+#### JUnit Rule
+
+If JUnit is on classpath, simplest way to use `embedded-consul` is via
+[JUnit rules](https://github.com/junit-team/junit4/wiki/Rules).
+
+``` java
+public class IntegrationTest {
+
+    @ClassRule
+    private static final ConsulResource consul = new ConsulResource();
+
+    private OkHttpClient client = new OkHttpClient();
+
+    @Test
+    public void shouldStartConsul() throws Throwable {
+        await().atMost(30, TimeUnit.SECONDS).until(() -> {
+            Request request = new Request.Builder()
+                    .url("http://localhost:" + consul.getHttpPort() + "/v1/agent/self")
+                    .build();
+
+            return client.newCall(request).execute().code() == 200;
+        });
+    }
+}
+```
+
+#### Manual
 ``` java
 
-    import com.pszymczyk.consul.ConsulProcess;
-    import com.pszymczyk.consul.ConsulStarter;
-    import com.pszymczyk.consul.ConsulStarterBuilder;
+public class IntegrationTest {
+
+    private ConsulProcess consul;
     
-    public class IntegrationTest {
-    
-        private OkHttpClient client = new OkHttpClient();
-        private ConsulProcess consul;
-    
-        @Before
-        public void setup() {
-            consul = ConsulStarterBuilder.consulStarter().build().start();
-        }
-    
-        @After
-        public void cleanup() throws Exception {
-            consul.close();
-        }
-    
-        @Test
-        public void shouldStartConsul() throws Throwable {
-            await().atMost(30, TimeUnit.SECONDS).until(() -> {
-                Request request = new Request.Builder()
-                        .url("http://localhost:" + consul.getHttpPort() + "/v1/agent/self")
-                        .build();
-    
-                return client.newCall(request).execute().code() == 200;
-            });
-        }
+    @Before
+    public void setup() {
+        consul = ConsulStarterBuilder.consulStarter().build().start();
     }
+    
+    @After
+    public void cleanup() throws Exception {
+        consul.close();
+    }
+    
+    /* tests as in example above */
 ```
 
 ### Files structure
