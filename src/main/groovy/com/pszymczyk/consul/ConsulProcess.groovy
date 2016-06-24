@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
-public class ConsulProcess implements AutoCloseable{
+public class ConsulProcess implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class);
 
