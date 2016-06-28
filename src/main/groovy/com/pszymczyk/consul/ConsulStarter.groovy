@@ -1,5 +1,6 @@
 package com.pszymczyk.consul
 
+import com.ecwid.consul.v1.ConsulClient
 import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
@@ -61,14 +62,16 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=$httpPort"]
 
+        ConsulClient consulClient = new ConsulClient("localhost", httpPort)
         ConsulProcess process = new ConsulProcess(dataDir: dataDir, httpPort: httpPort,
+                consulClient: consulClient,
                 process: new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
                         .inheritIO()
                         .start())
 
-        new ConsulWaiter(httpPort).await()
+        new ConsulWaiter(httpPort).awaitUntilConsulStarted()
 
         return process
     }

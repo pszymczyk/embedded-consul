@@ -3,9 +3,7 @@ package com.pszymczyk.consul
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
 import com.ecwid.consul.v1.agent.model.NewService
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import spock.lang.Shared
+import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
@@ -14,13 +12,12 @@ import static com.jayway.awaitility.Awaitility.await
 
 class ConsulStarterTest extends Specification {
 
-    @Shared
-    OkHttpClient client = new OkHttpClient()
-
     ConsulProcess consul
+    ConsulTestWaiter consulWaiter
 
     def setup() {
         consul = ConsulStarterBuilder.consulStarter().build().start()
+        consulWaiter = new ConsulTestWaiter(consul.httpPort)
     }
 
     def cleanup() {
@@ -29,13 +26,7 @@ class ConsulStarterTest extends Specification {
 
     def "should start consul"() {
         expect:
-        await().atMost(30, TimeUnit.SECONDS).until({
-            Request request = new Request.Builder()
-                    .url("http://localhost:$consul.httpPort/v1/agent/self")
-                    .build();
-
-            client.newCall(request).execute().code() == 200
-        })
+        new ConsulClient("localhost", consul.httpPort).getStatusLeader() != ConsulWaiter.NO_LEADER_ELECTED_RESPONSE
     }
 
     def "should run multiple Consul processes simultaneously"() {
@@ -80,7 +71,26 @@ class ConsulStarterTest extends Specification {
         then:
         def ex = thrown EmbeddedConsulException
         ex.message =~ "Port $consul.httpPort is not available"
+    }
 
+    def "should reset Consul process"() {
+        given:
+        ConsulClient consulClient = new ConsulClient('localhost', consul.httpPort)
+        consulClient.agentServiceRegister(new NewService(id: '1', name: 'test-service-one'))
+        consulClient.agentServiceRegister(new NewService(id: '2', name: 'test-service-two'))
 
+        consulWaiter.awaitUntilServiceRegistered('1')
+        consulWaiter.awaitUntilServiceRegistered('2')
+
+        when:
+        Thread.sleep(1000)
+        consul.reset()
+
+        then:
+        consulClient.getAgentServices().value.size() == 1
+        consulClient.getAgentServices().value.values().with {
+            it.size() == 1
+            it.first().service == 'consul'
+        }
     }
 }

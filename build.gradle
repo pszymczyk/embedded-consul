@@ -30,16 +30,15 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.1'
+    compile 'com.ecwid.consul:consul-api:1.1.10'
     compile 'org.apache.ant:ant:1.9.4'
     compile 'org.slf4j:slf4j-api:1.7.2'
 
     compileOnly 'junit:junit:4.12'
 
-    testCompile 'com.ecwid.consul:consul-api:1.1.6'
+    testCompile 'com.ecwid.consul:consul-api:1.1.10'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'com.jayway.awaitility:awaitility:1.7.0'
-    testCompile 'com.squareup.okhttp3:okhttp:3.3.1'
-
 }
 
 task wrapper(type: Wrapper) {
