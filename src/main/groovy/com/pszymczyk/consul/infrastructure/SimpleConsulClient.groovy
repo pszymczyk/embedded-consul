@@ -2,7 +2,7 @@ package com.pszymczyk.consul.infrastructure
 
 import groovy.json.JsonSlurper;
 
-public class SimpleConsulClient {
+class SimpleConsulClient {
 
     private static final String NO_LEADER_ELECTED_RESPONSE = /""/;
 

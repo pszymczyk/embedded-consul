@@ -4,9 +4,9 @@ import com.pszymczyk.consul.EmbeddedConsulException
 
 import java.util.concurrent.TimeUnit
 
-public class ConsulWaiter {
+class ConsulWaiter {
 
-    public static final int DEFAULT_WAITING_TIME_IN_SECONDS = 10
+    static final int DEFAULT_WAITING_TIME_IN_SECONDS = 10
 
     private final SimpleConsulClient simpleConsulClient
     private final int timeoutMilis

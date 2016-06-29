@@ -39,7 +39,7 @@ class ConsulStarter {
         unzip = new AntUnzip()
     }
 
-    public ConsulProcess start() {
+    ConsulProcess start() {
         logger.info("Starting new Consul process.")
         checkInitialState()
 
