@@ -1,6 +1,5 @@
 package com.pszymczyk.consul.infrastructure
 
-import com.ecwid.consul.v1.ConsulClient
 import com.pszymczyk.consul.EmbeddedConsulException
 
 import java.util.concurrent.TimeUnit
@@ -9,10 +8,7 @@ public class ConsulWaiter {
 
     public static final int DEFAULT_WAITING_TIME_IN_SECONDS = 10
 
-    static final String NO_LEADER_ELECTED_RESPONSE = "";
-
-    protected ConsulClient consulClient
-
+    private final SimpleConsulClient simpleConsulClient
     private final int timeoutMilis
 
     ConsulWaiter(int port) {
@@ -20,8 +16,8 @@ public class ConsulWaiter {
     }
 
     ConsulWaiter(int port, int timeoutInSeconds) {
-        this.consulClient = new ConsulClient("localhost", port)
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
+        this.simpleConsulClient = new SimpleConsulClient(httpPort: port)
     }
 
     void awaitUntilConsulStarted() {
@@ -38,7 +34,8 @@ public class ConsulWaiter {
 
     private boolean isLeaderElected() {
         try {
-            consulClient.getStatusLeader().getValue() != NO_LEADER_ELECTED_RESPONSE
+            boolean elected = simpleConsulClient.isLeaderElected()
+            elected
         } catch (def e) {
             false
         }

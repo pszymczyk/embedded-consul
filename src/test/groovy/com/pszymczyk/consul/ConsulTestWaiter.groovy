@@ -1,12 +1,16 @@
 package com.pszymczyk.consul
 
+import com.ecwid.consul.v1.ConsulClient
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 
 
 class ConsulTestWaiter extends ConsulWaiter {
 
+    ConsulClient consulClient
+
     ConsulTestWaiter(int port) {
         super(port)
+        this.consulClient = new ConsulClient("localhost", port)
     }
 
     void awaitUntilServiceRegistered(String id) {

@@ -30,7 +30,6 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.1'
-    compile 'com.ecwid.consul:consul-api:1.1.10'
     compile 'org.apache.ant:ant:1.9.4'
     compile 'org.slf4j:slf4j-api:1.7.2'
 

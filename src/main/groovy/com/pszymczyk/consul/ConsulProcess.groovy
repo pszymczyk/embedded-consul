@@ -1,6 +1,6 @@
 package com.pszymczyk.consul
 
-import com.ecwid.consul.v1.ConsulClient
+import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory;
 
@@ -10,19 +10,22 @@ public class ConsulProcess implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class);
 
-    ConsulClient consulClient
     Path dataDir
     int httpPort
     Process process
+    SimpleConsulClient simpleConsulClient
 
+    ConsulProcess(Path dataDir, int httpPort, Process process) {
+        this.dataDir = dataDir
+        this.httpPort = httpPort
+        this.process = process
+        this.simpleConsulClient = new SimpleConsulClient(httpPort: httpPort)
+    }
     /**
      * deregister all services except consul
      */
     public void reset() {
-        consulClient.getAgentServices().getValue()
-                .values()
-                .findAll({ it -> it.getService() != 'consul'})
-                .each { it -> consulClient.agentServiceDeregister(it.getId()) }
+        simpleConsulClient.getServicesIds().each { it -> simpleConsulClient.deregister(it) }
     }
 
     @Override

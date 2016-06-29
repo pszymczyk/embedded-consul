@@ -3,7 +3,7 @@ package com.pszymczyk.consul
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
 import com.ecwid.consul.v1.agent.model.NewService
-import com.pszymczyk.consul.infrastructure.ConsulWaiter
+import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ class ConsulStarterTest extends Specification {
 
     def "should start consul"() {
         expect:
-        new ConsulClient("localhost", consul.httpPort).getStatusLeader() != ConsulWaiter.NO_LEADER_ELECTED_RESPONSE
+        new ConsulClient("localhost", consul.httpPort).getStatusLeader() != SimpleConsulClient.NO_LEADER_ELECTED_RESPONSE
     }
 
     def "should run multiple Consul processes simultaneously"() {
