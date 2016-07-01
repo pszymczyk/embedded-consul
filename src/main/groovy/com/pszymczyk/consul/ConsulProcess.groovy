@@ -10,10 +10,10 @@ class ConsulProcess implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class);
 
-    private Path dataDir
-    private int httpPort
-    private Process process
-    private SimpleConsulClient simpleConsulClient
+    private final Path dataDir
+    private final int httpPort
+    private final Process process
+    private final SimpleConsulClient simpleConsulClient
 
     ConsulProcess(Path dataDir, int httpPort, Process process) {
         this.dataDir = dataDir
@@ -22,10 +22,12 @@ class ConsulProcess implements AutoCloseable {
         this.simpleConsulClient = new SimpleConsulClient(httpPort: httpPort)
     }
     /**
-     * deregister all services except consul
+     * - deregister all services except consul
+     * - remove all data from kv store
      */
     void reset() {
         simpleConsulClient.getServicesIds().each { it -> simpleConsulClient.deregister(it) }
+        simpleConsulClient.getAllKvStoreKeys()
     }
 
     @Override
