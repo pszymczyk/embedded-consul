@@ -39,7 +39,7 @@ class ConsulStarter {
         unzip = new AntUnzip()
     }
 
-    public ConsulProcess start() {
+    ConsulProcess start() {
         logger.info("Starting new Consul process.")
         checkInitialState()
 
@@ -61,14 +61,14 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=$httpPort"]
 
-        ConsulProcess process = new ConsulProcess(dataDir: dataDir, httpPort: httpPort,
-                process: new ProcessBuilder()
+        ConsulProcess process = new ConsulProcess(dataDir, httpPort,
+                new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
                         .inheritIO()
                         .start())
 
-        new ConsulWaiter(httpPort).await()
+        new ConsulWaiter(httpPort).awaitUntilConsulStarted()
 
         return process
     }

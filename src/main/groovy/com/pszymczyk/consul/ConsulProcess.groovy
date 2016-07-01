@@ -1,22 +1,39 @@
 package com.pszymczyk.consul
 
+import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
-public class ConsulProcess implements AutoCloseable {
+class ConsulProcess implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class);
 
-    Path dataDir;
-    int httpPort;
-    Process process;
+    private final Path dataDir
+    private final int httpPort
+    private final Process process
+    private final SimpleConsulClient simpleConsulClient
+
+    ConsulProcess(Path dataDir, int httpPort, Process process) {
+        this.dataDir = dataDir
+        this.httpPort = httpPort
+        this.process = process
+        this.simpleConsulClient = new SimpleConsulClient(httpPort: httpPort)
+    }
+    /**
+     * - deregister all services except consul
+     * - remove all data from kv store
+     */
+    void reset() {
+        simpleConsulClient.getServicesIds().each { it -> simpleConsulClient.deregister(it) }
+        simpleConsulClient.getAllKvStoreKeys()
+    }
 
     @Override
-    public void close() {
+    void close() {
         logger.info("Stopping consul process running on port {}", httpPort)
 
-        process.destroy();
+        process.destroy()
     }
 }

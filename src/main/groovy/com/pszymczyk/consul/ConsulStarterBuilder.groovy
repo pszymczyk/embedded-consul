@@ -19,36 +19,36 @@ class ConsulStarterBuilder {
 
     }
 
-    public static ConsulStarterBuilder consulStarter() {
+    static ConsulStarterBuilder consulStarter() {
         return new ConsulStarterBuilder()
     }
 
-    public ConsulStarterBuilder withLogLevel(LogLevel logLevel) {
+    ConsulStarterBuilder withLogLevel(LogLevel logLevel) {
         this.logLevel = logLevel
         this
     }
 
-    public ConsulStarterBuilder withDataDirectory(Path dataDir) {
+    ConsulStarterBuilder withDataDirectory(Path dataDir) {
         this.dataDir = dataDir
         this
     }
 
-    public ConsulStarterBuilder withConsulBinaryDownloadDirectory(Path downloadDir) {
+    ConsulStarterBuilder withConsulBinaryDownloadDirectory(Path downloadDir) {
         this.downloadDir = downloadDir
         this
     }
 
-    public ConsulStarterBuilder withPortsConfigFile(File file) {
+    ConsulStarterBuilder withPortsConfigFile(File file) {
         this.portsConfigFile = file
         this
     }
 
-    public ConsulStarterBuilder withHttpPort(int httpPort) {
+    ConsulStarterBuilder withHttpPort(int httpPort) {
         this.httpPort = httpPort
         this
     }
 
-    public ConsulStarter build() {
+    ConsulStarter build() {
         applyDefaults()
         return new ConsulStarter(dataDir, downloadDir, portsConfigFile, logLevel, httpPort)
     }

@@ -35,11 +35,9 @@ dependencies {
 
     compileOnly 'junit:junit:4.12'
 
-    testCompile 'com.ecwid.consul:consul-api:1.1.6'
+    testCompile 'com.ecwid.consul:consul-api:1.1.10'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'com.jayway.awaitility:awaitility:1.7.0'
-    testCompile 'com.squareup.okhttp3:okhttp:3.3.1'
-
 }
 
 task wrapper(type: Wrapper) {
