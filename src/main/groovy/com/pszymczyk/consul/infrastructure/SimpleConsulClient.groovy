@@ -1,22 +1,38 @@
 package com.pszymczyk.consul.infrastructure
 
-import groovy.json.JsonSlurper;
+import groovyx.net.http.ContentType
+import groovyx.net.http.HttpResponseDecorator
+import groovyx.net.http.RESTClient
 
 class SimpleConsulClient {
 
-    private static final String NO_LEADER_ELECTED_RESPONSE = /""/;
+    private static final String NO_LEADER_ELECTED_RESPONSE = "";
 
-    int httpPort
+    private final RESTClient http
+
+    SimpleConsulClient(int httpPort) {
+        this.http = new RESTClient("http://localhost:$httpPort")
+    }
 
     boolean isLeaderElected() {
-        "http://localhost:$httpPort/v1/status/leader".toURL().getText() != NO_LEADER_ELECTED_RESPONSE
+        HttpResponseDecorator response = http.get(path: '/v1/status/leader', contentType: ContentType.JSON)
+
+        response.getData() != NO_LEADER_ELECTED_RESPONSE
     }
 
     Collection getServicesIds() {
-        new JsonSlurper().parse("http://localhost:$httpPort/v1/agent/services".toURL()).keySet().findAll({ it -> it != "consul"})
+        HttpResponseDecorator resonse = http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
+
+        resonse.getData()
+                .keySet()
+                .findAll({ it -> it != 'consul' })
     }
 
     void deregister(String id) {
-        "http://localhost:$httpPort/v1/agent/service/deregister/$id".toURL().getText()
+        http.get(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
+    }
+
+    void clearKvStore() {
+        http.delete(path: '/v1/kv/', query: [recurse: true], contentType: ContentType.ANY)
     }
 }

@@ -19,13 +19,14 @@ class ConsulProcess implements AutoCloseable {
         this.dataDir = dataDir
         this.httpPort = httpPort
         this.process = process
-        this.simpleConsulClient = new SimpleConsulClient(httpPort: httpPort)
+        this.simpleConsulClient = new SimpleConsulClient(httpPort)
     }
     /**
      * - deregister all services except consul
      */
     void reset() {
         simpleConsulClient.getServicesIds().each { it -> simpleConsulClient.deregister(it) }
+        simpleConsulClient.clearKvStore()
     }
 
     @Override

@@ -29,8 +29,9 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.1'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile 'org.apache.ant:ant:1.9.4'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
     compile 'org.slf4j:slf4j-api:1.7.2'
 
     compileOnly 'junit:junit:4.12'
