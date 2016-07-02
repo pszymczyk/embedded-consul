@@ -35,4 +35,12 @@ class ConsulProcess implements AutoCloseable {
 
         process.destroy()
     }
+
+    Path getDataDir() {
+        return dataDir
+    }
+
+    int getHttpPort() {
+        return httpPort
+    }
 }
