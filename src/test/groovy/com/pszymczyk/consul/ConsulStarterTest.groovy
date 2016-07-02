@@ -2,15 +2,17 @@ package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
-import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import spock.lang.Shared
 import spock.lang.Specification
 
 class ConsulStarterTest extends Specification {
 
-    @Shared ConsulProcess consul
-    @Shared ConsulTestWaiter consulWaiter
-    @Shared ConsulClient consulClient
+    @Shared
+    ConsulProcess consul
+    @Shared
+    ConsulTestWaiter consulWaiter
+    @Shared
+    ConsulClient consulClient
 
     def setupSpec() {
         consul = ConsulStarterBuilder.consulStarter().build().start()
@@ -24,7 +26,7 @@ class ConsulStarterTest extends Specification {
 
     def "should start consul"() {
         expect:
-        consulClient.getStatusLeader().getValue() != SimpleConsulClient.NO_LEADER_ELECTED_RESPONSE
+        consulClient.getStatusLeader().getValue().startsWith("127.0.0.1:")
     }
 
     def "should throw exception when try to run Consul on busy port"() {
