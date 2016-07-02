@@ -38,7 +38,6 @@ class ConsulStarterTest extends Specification {
 
     def "should remove all services when reset Consul process"() {
         given:
-        println "LEADER: " + consulClient.getStatusLeader()
         consulClient.agentServiceRegister(new NewService(id: '1', name: 'test-service-one'))
         consulClient.agentServiceRegister(new NewService(id: '2', name: 'test-service-two'))
 
