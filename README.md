@@ -10,12 +10,12 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.1.6</version>
+      <version>0.1.7</version>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.6'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.7'
 ```
 
 ### Usage
