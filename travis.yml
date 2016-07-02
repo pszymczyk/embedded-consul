@@ -1,0 +1,4 @@
+language: groovy
+
+script:
+  - "./gradlew check"

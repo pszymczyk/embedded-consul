@@ -1,22 +1,30 @@
 package com.pszymczyk.consul.infrastructure
 
-import groovy.json.JsonSlurper;
+import groovy.json.JsonSlurper
+import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder
 
 class SimpleConsulClient {
 
     private static final String NO_LEADER_ELECTED_RESPONSE = /""/;
 
-    int httpPort
+    private final HTTPBuilder http
+
+    SimpleConsulClient(int httpPort) {
+        this.http = new HTTPBuilder("http://localhost:$httpPort")
+    }
 
     boolean isLeaderElected() {
-        "http://localhost:$httpPort/v1/status/leader".toURL().getText() != NO_LEADER_ELECTED_RESPONSE
+        http.get(path: '/v1/status/leader', contentType: ContentType.JSON) != NO_LEADER_ELECTED_RESPONSE
     }
 
     Collection getServicesIds() {
-        new JsonSlurper().parse("http://localhost:$httpPort/v1/agent/services".toURL()).keySet().findAll({ it -> it != "consul"})
+        http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
+                .keySet()
+                .findAll({ it -> it != 'consul' })
     }
 
     void deregister(String id) {
-        "http://localhost:$httpPort/v1/agent/service/deregister/$id".toURL().getText()
+        http.get(path:  "/v1/agent/service/deregister/$id",contentType: ContentType.ANY)
     }
 }

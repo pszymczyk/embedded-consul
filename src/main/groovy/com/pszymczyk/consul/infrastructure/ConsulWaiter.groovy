@@ -17,7 +17,7 @@ class ConsulWaiter {
 
     ConsulWaiter(int port, int timeoutInSeconds) {
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
-        this.simpleConsulClient = new SimpleConsulClient(httpPort: port)
+        this.simpleConsulClient = new SimpleConsulClient(port)
     }
 
     void awaitUntilConsulStarted() {
