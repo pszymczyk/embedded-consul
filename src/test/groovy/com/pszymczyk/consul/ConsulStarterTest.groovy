@@ -1,7 +1,10 @@
 package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.QueryParams
+import com.ecwid.consul.v1.agent.model.NewCheck
 import com.ecwid.consul.v1.agent.model.NewService
+import com.ecwid.consul.v1.session.model.NewSession
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -27,6 +30,7 @@ class ConsulStarterTest extends Specification {
     def "should start consul"() {
         expect:
         consulClient.getStatusLeader().getValue().startsWith("127.0.0.1:")
+        !consulClient.getCatalogNodes(QueryParams.DEFAULT).getValue().isEmpty()
     }
 
     def "should throw exception when try to run Consul on busy port"() {
@@ -66,5 +70,35 @@ class ConsulStarterTest extends Specification {
 
         then:
         consulClient.getKVBinaryValue("foo").getValue() == null
+    }
+
+    def "should destroy all sessions when reset Consul process"() {
+        given:
+        NewSession session = new NewSession()
+        consulClient.sessionCreate(session, QueryParams.DEFAULT)
+        assert !consulClient.getSessionList(QueryParams.DEFAULT).value.isEmpty()
+
+        when:
+        consul.reset()
+
+        then:
+        consulClient.getSessionList(QueryParams.DEFAULT).value.isEmpty()
+    }
+
+    def "should deregister all checks when reset Consul process"() {
+        given:
+        NewCheck newCheck = new NewCheck()
+        newCheck.name = "test-check"
+        newCheck.ttl = "15s"
+        newCheck.http = "http://example.com"
+
+        consulClient.agentCheckRegister(newCheck)
+        assert consulClient.getAgentChecks().value.size() == 1
+
+        when:
+        consul.reset()
+
+        then:
+        consulClient.getAgentChecks().value.isEmpty()
     }
 }

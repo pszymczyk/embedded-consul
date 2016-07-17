@@ -20,10 +20,16 @@ class SimpleConsulClient {
         response.getData() != NO_LEADER_ELECTED_RESPONSE
     }
 
-    Collection getServicesIds() {
-        HttpResponseDecorator resonse = http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
+    Collection getRegisteredNodes() {
+        HttpResponseDecorator response = http.get(path: '/v1/catalog/nodes', contentType: ContentType.JSON)
 
-        resonse.getData()
+        response.getData()
+    }
+
+    Collection getServicesIds() {
+        HttpResponseDecorator response = http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
+
+        response.getData()
                 .keySet()
                 .findAll({ it -> it != 'consul' })
     }
@@ -33,6 +39,25 @@ class SimpleConsulClient {
     }
 
     void clearKvStore() {
-        http.delete(path: '/v1/kv/', query: [recurse: true], contentType: ContentType.ANY)
+        http.delete(path: "/v1/kv/", query: [recurse: true], contentType: ContentType.ANY)
+    }
+
+    void destroyActiveSessions() {
+        HttpResponseDecorator response = http.get(path: "/v1/session/list", contentType: ContentType.JSON)
+
+        response.getData().each {
+            def id = it.ID
+            http.put(path: "/v1/session/destroy/$id", contentType:  ContentType.ANY)
+        }
+    }
+
+    void deregisterAllChecks() {
+        HttpResponseDecorator response = http.get(path: "/v1/agent/checks", contentType: ContentType.JSON)
+
+        response.getData().each {
+            def id = it.key
+
+            http.get(path: "/v1/agent/check/deregister/$id", contentType: ContentType.ANY)
+        }
     }
 }

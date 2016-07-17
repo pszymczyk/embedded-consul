@@ -49,7 +49,8 @@ class ConsulStarter {
             downloadAndUnpackBinary()
         }
 
-        String portsConfig = createConfigFile().absolutePath
+        ConsulPorts consulPorts = new ConsulPorts(httpPort)
+        String portsConfig = createConfigFile(consulPorts).absolutePath
         String downloadDirAsString = downloadDir.toAbsolutePath().toString()
 
         String[] command = ["$downloadDirAsString/consul",
@@ -61,7 +62,7 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=$httpPort"]
 
-        ConsulProcess process = new ConsulProcess(dataDir, httpPort,
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts,
                 new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
@@ -93,18 +94,17 @@ class ConsulStarter {
         unzip.unzip(archive, downloadDir.toFile())
     }
 
-    private File createConfigFile() {
+    private File createConfigFile(ConsulPorts consulPorts) {
         logger.info("Creating configuration file: {}", portsConfigFile.toString())
-        int[] ports = Ports.nextAvailable(5)
 
         portsConfigFile << """
             {
                 "ports": {
-                    "dns": """ + ports[0] + """,
-                    "rpc": """ + ports[1] + """,
-                    "serf_lan": """ + ports[2] + """,
-                    "serf_wan": """ + ports[3] + """,
-                    "server": """ + ports[4] + """
+                    "dns": """ + consulPorts.dnsPort + """,
+                    "rpc": """ + consulPorts.rpcPort + """,
+                    "serf_lan": """ + consulPorts.serfLanPort + """,
+                    "serf_wan": """ + consulPorts.serfWanPort + """,
+                    "server": """ + consulPorts.serverPort + """
                 }
             }
         """
