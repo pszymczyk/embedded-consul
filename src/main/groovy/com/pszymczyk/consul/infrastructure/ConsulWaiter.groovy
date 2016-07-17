@@ -44,7 +44,7 @@ class ConsulWaiter {
 
     private boolean allNodesRegistered() {
         try {
-            !simpleConsulClient.getRegisteredNodes().isEmpty()
+            simpleConsulClient.getRegisteredNodes().first().TaggedAddresses != null
         } catch (def e) {
             false
         }

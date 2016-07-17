@@ -2,6 +2,7 @@ package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
+import com.ecwid.consul.v1.agent.model.NewCheck
 import com.ecwid.consul.v1.agent.model.NewService
 import com.ecwid.consul.v1.session.model.NewSession
 import spock.lang.Shared
@@ -71,7 +72,7 @@ class ConsulStarterTest extends Specification {
         consulClient.getKVBinaryValue("foo").getValue() == null
     }
 
-    def "should destroy all sessions"() {
+    def "should destroy all sessions when reset Consul process"() {
         given:
         NewSession session = new NewSession()
         consulClient.sessionCreate(session, QueryParams.DEFAULT)
@@ -82,5 +83,22 @@ class ConsulStarterTest extends Specification {
 
         then:
         consulClient.getSessionList(QueryParams.DEFAULT).value.isEmpty()
+    }
+
+    def "should deregister all checks when reset Consul process"() {
+        given:
+        NewCheck newCheck = new NewCheck()
+        newCheck.name = "test-check"
+        newCheck.ttl = "15s"
+        newCheck.http = "http://example.com"
+
+        consulClient.agentCheckRegister(newCheck)
+        assert consulClient.getAgentChecks().value.size() == 1
+
+        when:
+        consul.reset()
+
+        then:
+        consulClient.getAgentChecks().value.isEmpty()
     }
 }
