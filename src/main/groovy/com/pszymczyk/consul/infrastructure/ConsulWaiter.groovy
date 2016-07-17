@@ -25,7 +25,7 @@ class ConsulWaiter {
 
         boolean elected
 
-        while ((elected = isLeaderElected()) == false && !isTimedOut(startTime)) {
+        while ((elected = isLeaderElected() && allNodesRegistered()) == false && !isTimedOut(startTime)) {
             Thread.sleep(100)
         }
 
@@ -40,6 +40,14 @@ class ConsulWaiter {
             false
         }
 
+    }
+
+    private boolean allNodesRegistered() {
+        try {
+            !simpleConsulClient.getRegisteredNodes().isEmpty()
+        } catch (def e) {
+            false
+        }
     }
 
     protected boolean isTimedOut(long startTime) {
