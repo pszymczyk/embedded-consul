@@ -10,12 +10,12 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.1.7</version>
+      <version>0.1.8</version>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.7'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.8'
 ```
 
 ### Usage
@@ -68,8 +68,13 @@ public class IntegrationTest {
 
 ### Reset Consul state
 
-The ConsulProcess can be reset at any time, removing all registered services and removes all data from kv store. Invoking `reset` method
-is faster than starting new Consul process.
+The ConsulProcess can be reset at any time. Reset method do few operations: 
+- removing all registered services
+- removes all registered checks
+- removes all data from kv store
+- destroy all active sessions
+ 
+Invoking `reset` method is faster than starting new Consul process.
 
 ```java
 
