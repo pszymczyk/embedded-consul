@@ -8,6 +8,8 @@ class AntUnzip {
 
     void unzip(File zip, File destDir) {
         new AntBuilder().unzip(src: zip.absolutePath, dest: destDir.absolutePath, overwrite: 'false')
-        Files.setPosixFilePermissions(Paths.get(destDir.absolutePath, 'consul'), [PosixFilePermission.OWNER_EXECUTE] as Set)
+        if ('windows' != OsResolver.resolve()) {
+            Files.setPosixFilePermissions(Paths.get(destDir.absolutePath, 'consul'), [PosixFilePermission.OWNER_EXECUTE] as Set)
+        }
     }
 }
