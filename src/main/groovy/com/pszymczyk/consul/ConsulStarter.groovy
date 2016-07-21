@@ -3,6 +3,7 @@ package com.pszymczyk.consul
 import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
+import com.pszymczyk.consul.infrastructure.OsResolver
 import com.pszymczyk.consul.infrastructure.Ports
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -53,7 +54,12 @@ class ConsulStarter {
         String portsConfig = createConfigFile(consulPorts).absolutePath
         String downloadDirAsString = downloadDir.toAbsolutePath().toString()
 
-        String[] command = ["$downloadDirAsString/consul",
+        String pathToConsul = "$downloadDirAsString/consul"
+        if ('windows' == OsResolver.resolve()) {
+            pathToConsul = "$downloadDirAsString/consul.exe"
+        }
+
+        String[] command = [pathToConsul,
                             "agent",
                             "-data-dir=$dataDir",
                             "-dev",
