@@ -32,13 +32,37 @@ class ConsulResource extends ExternalResource {
 
     @Override
     protected void after() {
-        if(process != null) {
+        if (process != null) {
             process.close()
         }
     }
 
+    void reset() {
+        process.reset()
+    }
+
     int getHttpPort() {
-        return process.httpPort
+        process.httpPort
+    }
+
+    int getDnsPort() {
+        process.dnsPort
+    }
+
+    int getRpcPort() {
+        process.rpcPort
+    }
+
+    int getSerfLanPort() {
+        process.serfLanPort
+    }
+
+    int getSerfWanPort() {
+        process.serfWanPort
+    }
+
+    int getServerPort() {
+        process.serverPort
     }
 
     Path getDataDir() {

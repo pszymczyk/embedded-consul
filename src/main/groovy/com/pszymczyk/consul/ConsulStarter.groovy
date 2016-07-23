@@ -26,7 +26,7 @@ class ConsulStarter {
     private HttpBinaryRepository binaryRepository
     private AntUnzip unzip
 
-    ConsulStarter(Path dataDir, Path downloadDir, File  portsConfigFile, LogLevel logLevel, int httpPort) {
+    ConsulStarter(Path dataDir, Path downloadDir, File portsConfigFile, LogLevel logLevel, int httpPort) {
         this.logLevel = logLevel
         this.portsConfigFile = portsConfigFile
         this.dataDir = dataDir

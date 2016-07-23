@@ -4,18 +4,21 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 
 [![Build Status](https://travis-ci.org/pszymczyk/embedded-consul.svg?branch=master)](https://travis-ci.org/pszymczyk/embedded-consul)
 
+Compatible with jdk1.7+.
+Working on all operating systems: Mac, Linux, Windows.
+
 ### How to get it?
 
 ``` xml
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.1.8</version>
+      <version>0.1.9</version>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.8'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.9'
 ```
 
 ### Usage

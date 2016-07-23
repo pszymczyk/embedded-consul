@@ -3,6 +3,10 @@ package com.pszymczyk.consul
 import com.ecwid.consul.v1.ConsulClient
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 
+import java.util.concurrent.TimeUnit
+
+import static com.jayway.awaitility.Awaitility.await
+
 
 class ConsulTestWaiter extends ConsulWaiter {
 
@@ -14,20 +18,8 @@ class ConsulTestWaiter extends ConsulWaiter {
     }
 
     void awaitUntilServiceRegistered(String id) {
-        Long startTime = System.currentTimeMillis()
-
-        boolean found
-
-        while ((found = isServiceRegistered(id)) == false && isTimedOut(startTime)) {
-            Thread.sleep(100)
-        }
-
-        if (!found) {
-            abnormalTerminate("Could not find service with id $id")
-        }
-    }
-
-    private boolean isServiceRegistered(String id) {
-        consulClient.getAgentServices().getValue().values().findAll({ it -> id == it.id }).size() == 1
+        await().atMost(30, TimeUnit.SECONDS).until({
+            consulClient.getAgentServices().getValue().values().findAll({ id == it.id }).size() == 1
+        })
     }
 }
