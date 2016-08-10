@@ -11,9 +11,10 @@ class ConsulStarterBuilder {
 
     private Path dataDir
     private Path downloadDir
+    private String consulVersion = '0.6.4'
     private File portsConfigFile
     private LogLevel logLevel = LogLevel.ERR
-    private Integer httpPort
+    private ConsulPorts consulPorts
 
     private ConsulStarterBuilder() {
 
@@ -38,19 +39,29 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withConsulVersion(String consulVersion) {
+        this.consulVersion = consulVersion
+        this
+    }
+
     ConsulStarterBuilder withPortsConfigFile(File file) {
         this.portsConfigFile = file
         this
     }
 
     ConsulStarterBuilder withHttpPort(int httpPort) {
-        this.httpPort = httpPort
+        this.consulPorts = ConsulPorts.consulPorts().withHttpPort(httpPort).build()
+        this
+    }
+
+    ConsulStarterBuilder withConsulPorts(ConsulPorts consulPorts) {
+        this.consulPorts = consulPorts
         this
     }
 
     ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir, downloadDir, portsConfigFile, logLevel, httpPort)
+        return new ConsulStarter(dataDir, downloadDir, consulVersion, portsConfigFile, logLevel, consulPorts)
     }
 
     private void applyDefaults() {
@@ -67,8 +78,8 @@ class ConsulStarterBuilder {
             portsConfigFile = new File(dataDir.toFile(), "config.json")
         }
 
-        if (httpPort == null) {
-            this.httpPort = Ports.nextAvailable()
+        if (consulPorts == null) {
+            this.consulPorts = ConsulPorts.consulPorts().build()
         }
     }
 }
