@@ -18,7 +18,10 @@ class ConsulStarterTest extends Specification {
     ConsulClient consulClient
 
     def setupSpec() {
-        consul = ConsulStarterBuilder.consulStarter().build().start()
+        def conf = """{
+          "datacenter": "test-dc"
+        }"""
+        consul = ConsulStarterBuilder.consulStarter().withCustomConfig(conf).build().start()
         consulWaiter = new ConsulTestWaiter(consul.httpPort)
         consulClient = new ConsulClient('localhost', consul.httpPort)
     }
@@ -30,6 +33,7 @@ class ConsulStarterTest extends Specification {
     def "should start consul"() {
         expect:
         consulClient.getStatusLeader().getValue().startsWith("127.0.0.1:")
+        consulClient.getCatalogDatacenters().getValue().contains("test-dc")
         !consulClient.getCatalogNodes(QueryParams.DEFAULT).getValue().isEmpty()
     }
 

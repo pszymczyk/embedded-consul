@@ -17,7 +17,8 @@ class ConsulStarter {
 
     private final Path dataDir
     private final Path downloadDir
-    private final File portsConfigFile
+    private final Path configDir
+    private String customConfig;
     private final LogLevel logLevel
     private final int httpPort
 
@@ -26,9 +27,10 @@ class ConsulStarter {
     private HttpBinaryRepository binaryRepository
     private AntUnzip unzip
 
-    ConsulStarter(Path dataDir, Path downloadDir, File portsConfigFile, LogLevel logLevel, int httpPort) {
+    ConsulStarter(Path dataDir, Path downloadDir, Path configDir, String customConfig, LogLevel logLevel, int httpPort) {
         this.logLevel = logLevel
-        this.portsConfigFile = portsConfigFile
+        this.configDir = configDir
+        this.customConfig = customConfig
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.httpPort = httpPort
@@ -51,7 +53,10 @@ class ConsulStarter {
         }
 
         ConsulPorts consulPorts = new ConsulPorts(httpPort)
-        String portsConfig = createConfigFile(consulPorts).absolutePath
+        createPortsConfigFile(consulPorts)
+        if (customConfig != null) {
+            createCustomConfigFile()
+        }
         String downloadDirAsString = downloadDir.toAbsolutePath().toString()
 
         String pathToConsul = "$downloadDirAsString/consul"
@@ -63,7 +68,7 @@ class ConsulStarter {
                             "agent",
                             "-data-dir=$dataDir",
                             "-dev",
-                            "-config-file=$portsConfig",
+                            "-config-dir=$configDir",
                             "-advertise=127.0.0.1",
                             "-log-level=$logLevel.value",
                             "-http-port=$httpPort"]
@@ -100,8 +105,9 @@ class ConsulStarter {
         unzip.unzip(archive, downloadDir.toFile())
     }
 
-    private File createConfigFile(ConsulPorts consulPorts) {
-        logger.info("Creating configuration file: {}", portsConfigFile.toString())
+    private void createPortsConfigFile(ConsulPorts consulPorts) {
+        File portsConfigFile = new File(configDir.toFile(), "config.json")
+        logger.info("Creating ports configuration file: {}", portsConfigFile.toString())
 
         portsConfigFile << """
             {
@@ -114,6 +120,12 @@ class ConsulStarter {
                 }
             }
         """
+    }
+
+    private void createCustomConfigFile() {
+        File customConfigFile = new File(configDir.toFile(), "custom.json")
+        logger.info("Creating custom configuration file: {}", customConfigFile.toString())
+        customConfigFile << customConfig
     }
 
     private boolean isBinaryDownloaded() {
