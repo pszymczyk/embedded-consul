@@ -46,3 +46,9 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.13'
 }
+
+test {
+    testLogging {
+        exceptionFormat 'full'
+    }
+}
