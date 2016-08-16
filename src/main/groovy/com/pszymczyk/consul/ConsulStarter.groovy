@@ -4,7 +4,6 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
-import com.pszymczyk.consul.infrastructure.Ports
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -57,9 +56,9 @@ class ConsulStarter {
             downloadAndUnpackBinary()
         }
 
-        createPortsConfigFile(consulPorts)
+        createBasicConfigFile(consulPorts)
         if (customConfig != null) {
-            createCustomConfigFile()
+            createExtraConfigFile()
         }
 
         String downloadDirAsString = downloadDir.toAbsolutePath().toString()
@@ -114,8 +113,8 @@ class ConsulStarter {
         unzip.unzip(archive, downloadDir.toFile())
     }
 
-    private void createPortsConfigFile(ConsulPorts consulPorts) {
-        File portsConfigFile = new File(configDir.toFile(), "config.json")
+    private void createBasicConfigFile(ConsulPorts consulPorts) {
+        File portsConfigFile = new File(configDir.toFile(), "basic_config.json")
         logger.info("Creating ports configuration file: {}", portsConfigFile.toString())
 
         portsConfigFile << """
@@ -131,8 +130,8 @@ class ConsulStarter {
         """
     }
 
-    private void createCustomConfigFile() {
-        File customConfigFile = new File(configDir.toFile(), "custom.json")
+    private void createExtraConfigFile() {
+        File customConfigFile = new File(configDir.toFile(), "extra_config.json")
         logger.info("Creating custom configuration file: {}", customConfigFile.toString())
         customConfigFile << customConfig
     }

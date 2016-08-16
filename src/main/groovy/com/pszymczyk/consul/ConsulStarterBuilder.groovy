@@ -43,13 +43,13 @@ class ConsulStarterBuilder {
         this
     }
 
-    ConsulStarterBuilder withConfigDir(Path file) {
-        this.configDir = file
+    ConsulStarterBuilder withConfigDir(Path configDir) {
+        this.configDir = configDir
         this
     }
 
-    ConsulStarterBuilder withCustomConfig(String json) {
-        this.customConfig = json
+    ConsulStarterBuilder withCustomConfig(String customConfig) {
+        this.customConfig = customConfig
         this
     }
 

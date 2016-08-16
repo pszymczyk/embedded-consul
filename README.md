@@ -100,7 +100,6 @@ Invoking `reset` method is faster than starting new Consul process.
     │   ├── consul
     │   └── consul.zip
     ├── embedded-consul-data-dir + randomNumber
-    │   ├── config.json   
     │   ├── raft
     │   │   ├── peers.json
     │   │   ├── raft.db
@@ -108,7 +107,9 @@ Invoking `reset` method is faster than starting new Consul process.
     │   └── serf
     │       ├── local.snapshot
     │       └── remote.snapshot
-
+    ├── embedded-consul-config-dir + randomNumber
+    │   ├── basic_config.json   
+    │   └── extra_config.json
 ```
 
 To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul`. 
@@ -120,7 +121,7 @@ At the moment files are not deleted!.
 
 Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports). 
 Ports are randomized so it's possible to run multiple Consul Agent instances in single machine. 
-Configuration file is stored in `/$tmp/embedded-consul-data-dir$randomNumber/config.json`, sample content:
+Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/basic_config.json`, sample content:
   
 ```javascript
     
