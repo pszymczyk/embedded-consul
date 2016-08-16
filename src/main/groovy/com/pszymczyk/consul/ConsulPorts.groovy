@@ -20,65 +20,39 @@ class ConsulPorts {
         this.serverPort = serverPort
     }
 
-    static ConsulPortsBuilder consulPorts() {
-        return new ConsulPortsBuilder()
+    static ConsulPorts create() {
+        return new ConsulPorts(
+                Ports.nextAvailable(),
+                Ports.nextAvailable(),
+                Ports.nextAvailable(),
+                Ports.nextAvailable(),
+                Ports.nextAvailable(),
+                Ports.nextAvailable()
+        )
     }
 
-    static class ConsulPortsBuilder {
-
-        private int httpPort = -1
-        private int dnsPort = -1
-        private int rpcPort = -1
-        private int serfLanPort = -1
-        private int serfWanPort = -1
-        private int serverPort = -1
-
-        private ConsulPortsBuilder() {
-        }
-
-        ConsulPorts build() {
-            return new ConsulPorts(
-                    randomIfNotSet(httpPort),
-                    randomIfNotSet(dnsPort),
-                    randomIfNotSet(rpcPort),
-                    randomIfNotSet(serfLanPort),
-                    randomIfNotSet(serfWanPort),
-                    randomIfNotSet(serverPort)
-            )
-        }
-
-        private int randomIfNotSet(int port) {
-            return port > 0 ? port : Ports.nextAvailable()
-        }
-
-        ConsulPortsBuilder withHttpPort(int httpPort) {
-            this.httpPort = httpPort
-            return this
-        }
-
-        ConsulPortsBuilder withDnsPort(int dnsPort) {
-            this.dnsPort = dnsPort
-            return this
-        }
-
-        ConsulPortsBuilder withRpcPort(int rpcPort) {
-            this.rpcPort = rpcPort
-            return this
-        }
-
-        ConsulPortsBuilder withSerfLanPort(int serfLanPort) {
-            this.serfLanPort = serfLanPort
-            return this
-        }
-
-        ConsulPortsBuilder withSerfWanPort(int serfWanPort) {
-            this.serfWanPort = serfWanPort
-            return this
-        }
-
-        ConsulPortsBuilder withServerPort(int serverPort) {
-            this.serverPort = serverPort
-            return this
-        }
+    ConsulPorts withHttpPort(int httpPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
     }
+
+    ConsulPorts withDnsPort(int dnsPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
+    }
+
+    ConsulPorts withRpcPort(int rpcPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
+    }
+
+    ConsulPorts withSerfLanPort(int serfLanPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
+    }
+
+    ConsulPorts withSerfWanPort(int serfWanPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
+    }
+
+    ConsulPorts withServerPort(int serverPort) {
+        new ConsulPorts(httpPort, dnsPort, rpcPort, serfLanPort, serfWanPort, serverPort)
+    }
+
 }

@@ -1,7 +1,5 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.infrastructure.Ports
-
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -11,8 +9,9 @@ class ConsulStarterBuilder {
 
     private Path dataDir
     private Path downloadDir
+    private Path configDir
+    private String customConfig
     private String consulVersion = '0.6.4'
-    private File portsConfigFile
     private LogLevel logLevel = LogLevel.ERR
     private ConsulPorts consulPorts
 
@@ -44,13 +43,18 @@ class ConsulStarterBuilder {
         this
     }
 
-    ConsulStarterBuilder withPortsConfigFile(File file) {
-        this.portsConfigFile = file
+    ConsulStarterBuilder withConfigDir(Path configDir) {
+        this.configDir = configDir
+        this
+    }
+
+    ConsulStarterBuilder withCustomConfig(String customConfig) {
+        this.customConfig = customConfig
         this
     }
 
     ConsulStarterBuilder withHttpPort(int httpPort) {
-        this.consulPorts = ConsulPorts.consulPorts().withHttpPort(httpPort).build()
+        this.consulPorts = ConsulPorts.create().withHttpPort(httpPort)
         this
     }
 
@@ -61,7 +65,7 @@ class ConsulStarterBuilder {
 
     ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir, downloadDir, consulVersion, portsConfigFile, logLevel, consulPorts)
+        return new ConsulStarter(dataDir, downloadDir, configDir, consulVersion, customConfig, logLevel, consulPorts)
     }
 
     private void applyDefaults() {
@@ -74,12 +78,12 @@ class ConsulStarterBuilder {
             dataDir = Files.createTempDirectory("embedded-consul-data-dir")
         }
 
-        if (portsConfigFile == null) {
-            portsConfigFile = new File(dataDir.toFile(), "config.json")
+        if (configDir == null) {
+            configDir = Files.createTempDirectory("embedded-consul-config-dir")
         }
 
         if (consulPorts == null) {
-            this.consulPorts = ConsulPorts.consulPorts().build()
+            this.consulPorts = ConsulPorts.create()
         }
     }
 }

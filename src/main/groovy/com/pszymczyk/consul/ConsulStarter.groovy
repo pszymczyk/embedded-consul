@@ -4,7 +4,8 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
-import com.pszymczyk.consul.infrastructure.Ports
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -18,8 +19,9 @@ class ConsulStarter {
 
     private final Path dataDir
     private final Path downloadDir
+    private final Path configDir
+    private String customConfig;
     private final String consulVersion
-    private final File portsConfigFile
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
 
@@ -29,16 +31,38 @@ class ConsulStarter {
     private AntUnzip unzip
 
     @PackageScope
-    ConsulStarter(Path dataDir, Path downloadDir, String consulVersion, File portsConfigFile, LogLevel logLevel, ConsulPorts ports) {
+    ConsulStarter(Path dataDir, Path downloadDir, Path configDir, String consulVersion, String customConfig, LogLevel logLevel, ConsulPorts ports) {
         this.logLevel = logLevel
-        this.portsConfigFile = portsConfigFile
+        this.configDir = configDir
+        this.customConfig = customConfig
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
-        this.consulPorts = ports
+        this.consulPorts = mergePorts(ports, customConfig)
         makeDI()
     }
 
+    private static ConsulPorts mergePorts(ConsulPorts ports, String customConfig) {
+        if (customConfig == null || customConfig.isEmpty()) {
+            return ports
+        }
+        def parser = new JsonSlurper().setType(JsonParserType.LAX)
+        def extraPorts = parser.parseText(customConfig).getAt("ports")
+        if (extraPorts == null) {
+            return ports
+        }
+        extraPorts.collect { it ->
+            switch (it.key) {
+                case "dns": ports = ports.withDnsPort(it.value); break
+                case "http": ports = ports.withHttpPort(it.value); break
+                case "rpc": ports = ports.withRpcPort(it.value); break
+                case "serf_lan": ports = ports.withSerfLanPort(it.value); break
+                case "serf_wan": ports = ports.withSerfWanPort(it.value); break
+                case "server": ports = ports.withServerPort(it.value); break
+            }
+        }
+        ports
+    }
 
     private void makeDI() {
         binaryRepository = new HttpBinaryRepository()
@@ -55,7 +79,11 @@ class ConsulStarter {
             downloadAndUnpackBinary()
         }
 
-        String portsConfig = createConfigFile(consulPorts).absolutePath
+        createBasicConfigFile(consulPorts)
+        if (customConfig != null) {
+            createExtraConfigFile()
+        }
+
         String downloadDirAsString = downloadDir.toAbsolutePath().toString()
 
         String pathToConsul = "$downloadDirAsString/consul"
@@ -67,7 +95,7 @@ class ConsulStarter {
                             "agent",
                             "-data-dir=$dataDir",
                             "-dev",
-                            "-config-file=$portsConfig",
+                            "-config-dir=$configDir",
                             "-advertise=127.0.0.1",
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
@@ -108,8 +136,9 @@ class ConsulStarter {
         unzip.unzip(archive, downloadDir.toFile())
     }
 
-    private File createConfigFile(ConsulPorts consulPorts) {
-        logger.info("Creating configuration file: {}", portsConfigFile.toString())
+    private void createBasicConfigFile(ConsulPorts consulPorts) {
+        File portsConfigFile = new File(configDir.toFile(), "basic_config.json")
+        logger.info("Creating ports configuration file: {}", portsConfigFile.toString())
 
         portsConfigFile << """
             {
@@ -122,6 +151,12 @@ class ConsulStarter {
                 }
             }
         """
+    }
+
+    private void createExtraConfigFile() {
+        File customConfigFile = new File(configDir.toFile(), "extra_config.json")
+        logger.info("Creating custom configuration file: {}", customConfigFile.toString())
+        customConfigFile << customConfig
     }
 
     private boolean isBinaryDownloaded() {
