@@ -19,7 +19,10 @@ class ConsulStarterTest extends Specification {
 
     def setupSpec() {
         def conf = """{
-          "datacenter": "test-dc"
+          "datacenter": "test-dc",
+          "ports": {
+            "dns": 12121
+          }
         }"""
         consul = ConsulStarterBuilder.consulStarter().withCustomConfig(conf).build().start()
         consulWaiter = new ConsulTestWaiter(consul.httpPort)
@@ -34,6 +37,7 @@ class ConsulStarterTest extends Specification {
         expect:
         consulClient.getStatusLeader().getValue().startsWith("127.0.0.1:")
         consulClient.getCatalogDatacenters().getValue().contains("test-dc")
+        consul.getDnsPort() == 12121
         !consulClient.getCatalogNodes(QueryParams.DEFAULT).getValue().isEmpty()
     }
 

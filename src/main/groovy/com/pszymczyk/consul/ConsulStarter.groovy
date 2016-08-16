@@ -4,6 +4,8 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -36,10 +38,31 @@ class ConsulStarter {
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
-        this.consulPorts = ports
+        this.consulPorts = mergePorts(ports, customConfig)
         makeDI()
     }
 
+    private static ConsulPorts mergePorts(ConsulPorts ports, String customConfig) {
+        if (customConfig == null || customConfig.isEmpty()) {
+            return ports
+        }
+        def parser = new JsonSlurper().setType(JsonParserType.LAX)
+        def extraPorts = parser.parseText(customConfig).getAt("ports")
+        if (extraPorts == null) {
+            return ports
+        }
+        extraPorts.collect { it ->
+            switch (it.key) {
+                case "dns": ports = ports.withDnsPort(it.value); break
+                case "http": ports = ports.withHttpPort(it.value); break
+                case "rpc": ports = ports.withRpcPort(it.value); break
+                case "serf_lan": ports = ports.withSerfLanPort(it.value); break
+                case "serf_wan": ports = ports.withSerfWanPort(it.value); break
+                case "server": ports = ports.withServerPort(it.value); break
+            }
+        }
+        ports
+    }
 
     private void makeDI() {
         binaryRepository = new HttpBinaryRepository()

@@ -54,7 +54,7 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withHttpPort(int httpPort) {
-        this.consulPorts = ConsulPorts.consulPorts().withHttpPort(httpPort).build()
+        this.consulPorts = ConsulPorts.create().withHttpPort(httpPort)
         this
     }
 
@@ -83,7 +83,7 @@ class ConsulStarterBuilder {
         }
 
         if (consulPorts == null) {
-            this.consulPorts = ConsulPorts.consulPorts().build()
+            this.consulPorts = ConsulPorts.create()
         }
     }
 }
