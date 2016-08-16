@@ -31,7 +31,7 @@ class ConsulStarter {
     private AntUnzip unzip
 
     @PackageScope
-    ConsulStarter(Path dataDir, Path downloadDir, Path configDir, String consulVersion, String customConfig, LogLevel logLevel, ConsulPorts ports) {
+    ConsulStarter(Path dataDir, Path downloadDir, Path configDir, String consulVersion, String customConfig, LogLevel logLevel, ConsulPorts.ConsulPortsBuilder ports) {
         this.logLevel = logLevel
         this.configDir = configDir
         this.customConfig = customConfig
@@ -42,15 +42,9 @@ class ConsulStarter {
         makeDI()
     }
 
-    private static ConsulPorts mergePorts(ConsulPorts ports, String customConfig) {
-        if (customConfig == null || customConfig.isEmpty()) {
-            return ports
-        }
-        def parser = new JsonSlurper().setType(JsonParserType.LAX)
-        def extraPorts = parser.parseText(customConfig).getAt("ports")
-        if (extraPorts == null) {
-            return ports
-        }
+    private static ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports, String customConfig) {
+        def extraPorts = parseCustomConfig(customConfig)
+
         extraPorts.collect { it ->
             switch (it.key) {
                 case "dns": ports = ports.withDnsPort(it.value); break
@@ -61,7 +55,16 @@ class ConsulStarter {
                 case "server": ports = ports.withServerPort(it.value); break
             }
         }
-        ports
+        ports.build()
+    }
+
+    private static def parseCustomConfig(String customConfig) {
+        if (customConfig == null || customConfig.isEmpty()) {
+            return [:]
+        }
+
+        def parser = new JsonSlurper().setType(JsonParserType.LAX)
+        return parser.parseText(customConfig)["ports"]
     }
 
     private void makeDI() {
@@ -124,7 +127,6 @@ class ConsulStarter {
             // socket is free - everything ok
         }
     }
-
 
     private void downloadAndUnpackBinary() {
         File file = new File(downloadDir.toAbsolutePath().toString(), 'consul.zip')

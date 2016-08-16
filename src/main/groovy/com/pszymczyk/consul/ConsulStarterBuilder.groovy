@@ -13,7 +13,7 @@ class ConsulStarterBuilder {
     private String customConfig
     private String consulVersion = '0.6.4'
     private LogLevel logLevel = LogLevel.ERR
-    private ConsulPorts consulPorts
+    private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
 
     private ConsulStarterBuilder() {
 
@@ -54,18 +54,18 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withHttpPort(int httpPort) {
-        this.consulPorts = ConsulPorts.create().withHttpPort(httpPort)
+        this.consulPortsBuilder.withHttpPort(httpPort)
         this
     }
 
     ConsulStarterBuilder withConsulPorts(ConsulPorts consulPorts) {
-        this.consulPorts = consulPorts
+        this.consulPortsBuilder.fromConsulPorts(consulPorts)
         this
     }
 
     ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir, downloadDir, configDir, consulVersion, customConfig, logLevel, consulPorts)
+        return new ConsulStarter(dataDir, downloadDir, configDir, consulVersion, customConfig, logLevel, consulPortsBuilder)
     }
 
     private void applyDefaults() {
@@ -82,8 +82,8 @@ class ConsulStarterBuilder {
             configDir = Files.createTempDirectory("embedded-consul-config-dir")
         }
 
-        if (consulPorts == null) {
-            this.consulPorts = ConsulPorts.create()
+        if (consulPortsBuilder == null) {
+            this.consulPortsBuilder = ConsulPorts.create()
         }
     }
 }
