@@ -1,7 +1,5 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.infrastructure.Ports
-
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -13,8 +11,9 @@ class ConsulStarterBuilder {
     private Path downloadDir
     private Path configDir
     private String customConfig
+    private String consulVersion = '0.6.4'
     private LogLevel logLevel = LogLevel.ERR
-    private Integer httpPort
+    private ConsulPorts consulPorts
 
     private ConsulStarterBuilder() {
 
@@ -39,6 +38,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withConsulVersion(String consulVersion) {
+        this.consulVersion = consulVersion
+        this
+    }
+
     ConsulStarterBuilder withConfigDir(Path file) {
         this.configDir = file
         this
@@ -50,13 +54,18 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withHttpPort(int httpPort) {
-        this.httpPort = httpPort
+        this.consulPorts = ConsulPorts.consulPorts().withHttpPort(httpPort).build()
+        this
+    }
+
+    ConsulStarterBuilder withConsulPorts(ConsulPorts consulPorts) {
+        this.consulPorts = consulPorts
         this
     }
 
     ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir, downloadDir, configDir, customConfig, logLevel, httpPort)
+        return new ConsulStarter(dataDir, downloadDir, configDir, consulVersion, customConfig, logLevel, consulPorts)
     }
 
     private void applyDefaults() {
@@ -73,8 +82,8 @@ class ConsulStarterBuilder {
             configDir = Files.createTempDirectory("embedded-consul-config-dir")
         }
 
-        if (httpPort == null) {
-            this.httpPort = Ports.nextAvailable()
+        if (consulPorts == null) {
+            this.consulPorts = ConsulPorts.consulPorts().build()
         }
     }
 }

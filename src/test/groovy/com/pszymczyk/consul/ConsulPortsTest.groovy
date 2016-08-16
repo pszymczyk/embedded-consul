@@ -7,7 +7,7 @@ class ConsulPortsTest extends Specification {
 
     def "should generate random ports"() {
         when:
-        ConsulPorts consulPorts = new ConsulPorts(0)
+        ConsulPorts consulPorts = ConsulPorts.consulPorts().build()
 
         then:
         consulPorts.dnsPort
@@ -19,7 +19,7 @@ class ConsulPortsTest extends Specification {
 
     def "should return passed http port"() {
         when:
-        ConsulPorts consulPorts = new ConsulPorts(8500)
+        ConsulPorts consulPorts = ConsulPorts.consulPorts().withHttpPort(8500).build()
 
         then:
         consulPorts.httpPort == 8500
