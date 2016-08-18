@@ -13,12 +13,12 @@ Working on all operating systems: Mac, Linux, Windows.
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.1.9</version>
+      <version>0.1.10</version>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.9'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.1.10'
 ```
 
 ### Usage
@@ -89,6 +89,26 @@ Invoking `reset` method is faster than starting new Consul process.
     
     assert consulClient.getKVBinaryValue("foo").getValue() == null
 ```
+
+### Passing custom configuration
+
+If you want to pass custom property which is not covered by ConsulBuilder you can pass JSON configuration: 
+ 
+```java
+    
+String customConfiguration = 
+                "{" +
+                    "\"datacenter\": \"test-dc\"," +                    
+                    "\"log_level\": \"INFO\", +
+                    "\"node_name\": \"foobar\"
+                "}";
+        
+ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
+     
+``` 
+
+Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base 
+configuration (with highest priority). 
 
 ### Files structure
 
