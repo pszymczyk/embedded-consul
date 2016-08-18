@@ -99,7 +99,7 @@ If you want to pass custom property which is not covered by ConsulBuilder you ca
 String customConfiguration = 
                 "{" +
                     "\"datacenter\": \"test-dc\"," +                    
-                    "\"log_level\": \"INFO\", +
+                    "\"log_level\": \"INFO\"," +
                     "\"node_name\": \"foobar\"
                 "}";
         
