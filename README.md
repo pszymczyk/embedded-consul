@@ -100,7 +100,7 @@ String customConfiguration =
                 "{" +
                     "\"datacenter\": \"test-dc\"," +                    
                     "\"log_level\": \"INFO\"," +
-                    "\"node_name\": \"foobar\"
+                    "\"node_name\": \"foobar\"" +
                 "}";
         
 ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
@@ -156,5 +156,3 @@ Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/b
     }
   
 ```
-
-[Full example](https://github.com/pszymczyk/embedded-consul/blob/master/src/test/groovy/com/pszymczyk/embedded/consul/ConsulStarterTest.groovy#L41) 
