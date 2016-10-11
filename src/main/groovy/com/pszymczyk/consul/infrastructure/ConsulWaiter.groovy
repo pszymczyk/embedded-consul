@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 class ConsulWaiter {
 
-    static final int DEFAULT_WAITING_TIME_IN_SECONDS = 10
+    static final int DEFAULT_WAITING_TIME_IN_SECONDS = 30
 
     private final SimpleConsulClient simpleConsulClient
     private final int timeoutMilis

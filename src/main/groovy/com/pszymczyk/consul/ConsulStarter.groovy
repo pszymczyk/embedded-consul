@@ -98,6 +98,7 @@ class ConsulStarter {
                             "agent",
                             "-data-dir=$dataDir",
                             "-dev",
+                            "-bootstrap",
                             "-config-dir=$configDir",
                             "-advertise=127.0.0.1",
                             "-log-level=$logLevel.value",
