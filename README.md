@@ -6,6 +6,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 
 [![Reference Status](https://www.versioneye.com/java/com.pszymczyk.consul:embedded-consul/reference_badge.svg?style=flat-square)](https://www.versioneye.com/java/com.pszymczyk.consul:embedded-consul/references)
 
+Using Consul 0.7.0 <br />
 Compatible with jdk1.7+. <br />
 Working on all operating systems: Mac, Linux, Windows.
 
