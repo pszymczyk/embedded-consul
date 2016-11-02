@@ -1,5 +1,6 @@
 package com.pszymczyk.consul
 
+import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,13 @@ class ConsulProcess implements AutoCloseable {
 
     @Override
     void close() {
-        logger.info("Stopping consul process running on port {}", httpPort)
+        logger.info("Stopping Consul process running on port {}", httpPort)
 
         process.destroy()
+
+        new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStopped() == true ?
+                logger.info("Stopped Consul process running on port {}", httpPort) :
+                logger.warn("Can't stop Consul process running on port {}", httpPort)
     }
 
     Path getDataDir() {
