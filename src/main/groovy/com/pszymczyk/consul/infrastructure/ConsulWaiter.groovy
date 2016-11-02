@@ -1,6 +1,7 @@
 package com.pszymczyk.consul.infrastructure
 
 import com.pszymczyk.consul.EmbeddedConsulException
+import org.codehaus.groovy.runtime.IOGroovyMethods
 
 import java.util.concurrent.TimeUnit
 
@@ -10,6 +11,7 @@ class ConsulWaiter {
 
     private final SimpleConsulClient simpleConsulClient
     private final int timeoutMilis
+    private final int port
 
     ConsulWaiter(int port) {
         this(port, DEFAULT_WAITING_TIME_IN_SECONDS)
@@ -17,6 +19,7 @@ class ConsulWaiter {
 
     ConsulWaiter(int port, int timeoutInSeconds) {
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
+        this.port = port
         this.simpleConsulClient = new SimpleConsulClient(port)
     }
 
@@ -30,6 +33,21 @@ class ConsulWaiter {
         }
 
         if (!elected) abnormalTerminate("Could not start Consul process")
+    }
+
+    boolean awaitUntilConsulStopped() {
+        Long startTime = System.currentTimeMillis()
+        while (!isTimedOut(startTime)) {
+            try {
+                IOGroovyMethods.withCloseable(new Socket("localhost", port), {
+                    it -> Thread.sleep(100)
+                })
+            } catch (IOException ex) {
+                return true
+            }
+        }
+
+        false
     }
 
     private boolean isLeaderElected() {
