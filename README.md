@@ -6,7 +6,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 
 [![Reference Status](https://www.versioneye.com/java/com.pszymczyk.consul:embedded-consul/reference_badge.svg?style=flat-square)](https://www.versioneye.com/java/com.pszymczyk.consul:embedded-consul/references)
 
-Using Consul 0.7.0 <br />
+Built on Consul 0.7.0 <br />
 Compatible with jdk1.7+. <br />
 Working on all operating systems: Mac, Linux, Windows.
 
@@ -16,12 +16,12 @@ Working on all operating systems: Mac, Linux, Windows.
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.1</version>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.2.0'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.2.1'
 ```
 
 ### Usage
@@ -58,65 +58,65 @@ public class IntegrationTest {
 public class IntegrationTest {
 
     private ConsulProcess consul;
-    
+
     @Before
     public void setup() {
         consul = ConsulStarterBuilder.consulStarter().build().start();
     }
-    
+
     @After
     public void cleanup() throws Exception {
         consul.close();
     }
-    
+
     /* tests as in example above */
 ```
 
 ### Reset Consul state
 
-The ConsulProcess can be reset at any time. Reset method do few operations: 
+The ConsulProcess can be reset at any time. Reset method do few operations:
 - removing all registered services
 - removes all registered checks
 - removes all data from kv store
 - destroy all active sessions
- 
+
 Invoking `reset` method is faster than starting new Consul process.
 
 ```java
 
     consulClient.setKVBinaryValue("foo", "bar".getBytes())
-    
+
     // do sth
-    
+
     consul.reset()
-    
+
     assert consulClient.getKVBinaryValue("foo").getValue() == null
 ```
 
 ### Passing custom configuration
 
-If you want to pass custom property which is not covered by ConsulBuilder you can pass JSON configuration: 
- 
+If you want to pass custom property which is not covered by ConsulBuilder you can pass JSON configuration:
+
 ```java
-    
-String customConfiguration = 
+
+String customConfiguration =
                 "{" +
                     "\"datacenter\": \"test-dc\"," +                    
                     "\"log_level\": \"INFO\"," +
                     "\"node_name\": \"foobar\"" +
                 "}";
-        
-ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
-     
-``` 
 
-Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base 
-configuration (with highest priority). 
+ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
+
+```
+
+Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base
+configuration (with highest priority).
 
 ### Files structure
 
 ```
-    
+
     ├─$temp-directory
     │ 
     ├── embedded-consul
@@ -135,19 +135,19 @@ configuration (with highest priority).
     │   └── extra_config.json
 ```
 
-To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul`. 
+To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul`.
 Another stuff (ports config, raft, serf) is created in dynamically named temp directories.
 
 At the moment files are not deleted!.
-  
-### Simultaneous running 
 
-Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports). 
-Ports are randomized so it's possible to run multiple Consul Agent instances in single machine. 
+### Simultaneous running
+
+Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports).
+Ports are randomized so it's possible to run multiple Consul Agent instances in single machine.
 Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/basic_config.json`, sample content:
-  
+
 ```javascript
-    
+
     {
         "ports": {
             "dns": 64294,
@@ -157,5 +157,5 @@ Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/b
             "server": 64298
         }
     }
-  
+
 ```
