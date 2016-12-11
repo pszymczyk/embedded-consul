@@ -7,7 +7,6 @@ nexusStaging {
 
 modifyPom {
     project {
-        name 'Embedded Consul'
         description 'Embedded Consul provides easy way to run Consul in integration tests.'
         url 'https://github.com/pszymczyk/embedded-consul'
         inceptionYear '2016'

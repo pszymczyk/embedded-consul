@@ -1,0 +1,7 @@
+apply plugin: 'java'
+
+dependencies {
+    compile project(':embedded-consul')
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '1.4.2.RELEASE'
+}

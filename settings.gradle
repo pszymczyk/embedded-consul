@@ -1,2 +1,6 @@
-rootProject.name = 'embedded-consul'
+rootProject.name = 'embedded-consul-root'
 
+include 'embedded-consul-core',
+        'embedded-consul-spring-boot'
+
+project(":embedded-consul-core").name = "embedded-consul"

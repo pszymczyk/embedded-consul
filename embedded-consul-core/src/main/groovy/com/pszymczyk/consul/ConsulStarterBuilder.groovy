@@ -33,6 +33,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withConsulBinaryLocation(Path downloadDir) {
+        this.downloadDir = downloadDir
+        this
+    }
+
     ConsulStarterBuilder withConsulBinaryDownloadDirectory(Path downloadDir) {
         this.downloadDir = downloadDir
         this
