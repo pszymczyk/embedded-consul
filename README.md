@@ -113,6 +113,15 @@ ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(cus
 Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base
 configuration (with highest priority).
 
+### Changing where to download Consul
+
+An environment variable can be set to change the consul CDN:
+
+```bash
+# default
+export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
+```
+
 ### Files structure
 
 ```
