@@ -11,7 +11,7 @@ class ConsulStarterBuilder {
     private Path downloadDir
     private Path configDir
     private String customConfig
-    private String consulVersion = '0.7.1'
+    private String consulVersion = '0.7.5'
     private LogLevel logLevel = LogLevel.ERR
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
 

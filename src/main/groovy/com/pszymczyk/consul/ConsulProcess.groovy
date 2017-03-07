@@ -34,13 +34,13 @@ class ConsulProcess implements AutoCloseable {
 
     @Override
     void close() {
-        logger.info("Stopping Consul process running on port {}", httpPort)
+        logger.info("Stopping Consul process")
 
         process.destroy()
 
         new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStopped() == true ?
-                logger.info("Stopped Consul process running on port {}", httpPort) :
-                logger.warn("Can't stop Consul process running on port {}", httpPort)
+                logger.info("Stopped Consul process") :
+                logger.warn("Can't stop Consul process running on port {}", consulPorts.httpPort)
     }
 
     Path getDataDir() {
