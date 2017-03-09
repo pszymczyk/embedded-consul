@@ -127,7 +127,7 @@ export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
 
     ├─$temp-directory
     │ 
-    ├── embedded-consul
+    ├── embedded-consul-$consul-version
     │   ├── consul
     │   └── consul.zip
     ├── embedded-consul-data-dir + randomNumber
@@ -143,7 +143,7 @@ export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
     │   └── extra_config.json
 ```
 
-To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul`.
+To avoid unnecessary downloads Consul binary is downloaded into static named directory `/$tmp/embedded-consul-$consul-version`.
 Another stuff (ports config, raft, serf) is created in dynamically named temp directories.
 
 At the moment files are not deleted!.
