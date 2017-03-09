@@ -147,11 +147,11 @@ class ConsulStarter {
         portsConfigFile << """
             {
                 "ports": {
-                    "dns": """ + consulPorts.dnsPort + """,
-                    "rpc": """ + consulPorts.rpcPort + """,
-                    "serf_lan": """ + consulPorts.serfLanPort + """,
-                    "serf_wan": """ + consulPorts.serfWanPort + """,
-                    "server": """ + consulPorts.serverPort + """
+                    "dns": ${consulPorts.dnsPort},
+                    "rpc": ${consulPorts.rpcPort},
+                    "serf_lan": ${consulPorts.serfLanPort},
+                    "serf_wan": ${consulPorts.serfWanPort},
+                    "server": ${consulPorts.serverPort}
                 },
                 "disable_update_check": true,
                 "performance": {

@@ -70,7 +70,7 @@ class ConsulStarterBuilder {
 
     private void applyDefaults() {
         if (downloadDir == null) {
-            downloadDir = Paths.get(Files.createTempDirectory('').parent.toString(), 'embedded-consul')
+            downloadDir = Paths.get(Files.createTempDirectory('').parent.toString(), "embedded-consul-$consulVersion")
             Files.createDirectories(downloadDir)
         }
 
