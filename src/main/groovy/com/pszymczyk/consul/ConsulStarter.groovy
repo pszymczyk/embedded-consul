@@ -110,7 +110,9 @@ class ConsulStarter {
                         .inheritIO()
                         .start())
 
+        logger.info("Starting Consul process on port {}", consulPorts.httpPort)
         new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStarted()
+        logger.info("Consul process started")
 
         return process
     }
@@ -150,6 +152,10 @@ class ConsulStarter {
                     "serf_lan": """ + consulPorts.serfLanPort + """,
                     "serf_wan": """ + consulPorts.serfWanPort + """,
                     "server": """ + consulPorts.serverPort + """
+                },
+                "disable_update_check": true,
+                "performance": {
+                    "raft_multiplier": 1
                 }
             }
         """
