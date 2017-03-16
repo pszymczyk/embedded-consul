@@ -1,5 +1,8 @@
 language: groovy
 
+jdk:
+  - oraclejdk7
+
 dist: trusty
 
 script:
