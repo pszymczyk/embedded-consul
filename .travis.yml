@@ -1,6 +1,9 @@
 language: groovy
 
-dist: trusty
+jdk:
+  - oraclejdk7
+
+dist: precise
 
 script:
   - "./gradlew check"
