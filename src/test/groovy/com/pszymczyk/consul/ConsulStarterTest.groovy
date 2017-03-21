@@ -8,6 +8,10 @@ import com.ecwid.consul.v1.session.model.NewSession
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
+
 class ConsulStarterTest extends Specification {
 
     @Shared
@@ -108,5 +112,39 @@ class ConsulStarterTest extends Specification {
 
         then:
         consulClient.getAgentChecks().value.isEmpty()
+    }
+
+    def "should apply new custom config when restart with same config dir"() {
+        given:
+        consul.close()
+
+        def conf = """{
+            "datacenter": "before"
+        }"""
+
+        def anotherConf = """{
+            "datacenter": "after"
+        }"""
+
+        Path tempDir = Files.createTempDirectory("for_test_extra_config");
+
+        when:
+        ConsulStarter starter = ConsulStarterBuilder.consulStarter()
+            .withConfigDir(tempDir)
+            .withCustomConfig(conf)
+            .build()
+        starter.start().close()
+
+        ConsulStarter anotherStarter = ConsulStarterBuilder.consulStarter()
+            .withConfigDir(tempDir)
+            .withCustomConfig(anotherConf)
+            .build()
+        anotherStarter.start().close()
+
+        String finalConfig = tempDir.resolve("extra_config.json").toFile()
+                                    .getText(Charset.defaultCharset().toString())
+
+        then:
+        finalConfig == anotherConf
     }
 }
