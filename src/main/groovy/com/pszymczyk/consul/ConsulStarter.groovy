@@ -144,7 +144,7 @@ class ConsulStarter {
         File portsConfigFile = new File(configDir.toFile(), "basic_config.json")
         logger.info("Creating ports configuration file: {}", portsConfigFile.toString())
 
-        portsConfigFile << """
+        portsConfigFile.text = """
             {
                 "ports": {
                     "dns": ${consulPorts.dnsPort},
@@ -164,7 +164,7 @@ class ConsulStarter {
     private void createExtraConfigFile() {
         File customConfigFile = new File(configDir.toFile(), "extra_config.json")
         logger.info("Creating custom configuration file: {}", customConfigFile.toString())
-        customConfigFile << customConfig
+        customConfigFile.text = customConfig
     }
 
     private boolean isBinaryDownloaded() {
