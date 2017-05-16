@@ -24,6 +24,7 @@ class ConsulStarter {
     private final String consulVersion
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
+    private final String advertise
 
     private boolean started = false
 
@@ -31,7 +32,14 @@ class ConsulStarter {
     private AntUnzip unzip
 
     @PackageScope
-    ConsulStarter(Path dataDir, Path downloadDir, Path configDir, String consulVersion, String customConfig, LogLevel logLevel, ConsulPorts.ConsulPortsBuilder ports) {
+    ConsulStarter(Path dataDir,
+                  Path downloadDir,
+                  Path configDir,
+                  String consulVersion,
+                  String customConfig,
+                  LogLevel logLevel,
+                  ConsulPorts.ConsulPortsBuilder ports,
+                  String advertise) {
         this.logLevel = logLevel
         this.configDir = configDir
         this.customConfig = customConfig
@@ -39,6 +47,7 @@ class ConsulStarter {
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
         this.consulPorts = mergePorts(ports, customConfig)
+        this.advertise = advertise
         makeDI()
     }
 
@@ -99,7 +108,7 @@ class ConsulStarter {
                             "-data-dir=$dataDir",
                             "-dev",
                             "-config-dir=$configDir",
-                            "-advertise=127.0.0.1",
+                            "-advertise=$advertise",
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
 
