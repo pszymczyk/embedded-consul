@@ -15,6 +15,7 @@ class ConsulStarterBuilder {
     private LogLevel logLevel = LogLevel.ERR
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
     private String advertise = "127.0.0.1"
+    private String client = "127.0.0.1"
 
     private ConsulStarterBuilder() {
 
@@ -69,6 +70,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    String withClient(String client) {
+        this.client = client
+        this
+    }
+
     ConsulStarter build() {
         applyDefaults()
         return new ConsulStarter(dataDir,
@@ -78,7 +84,8 @@ class ConsulStarterBuilder {
                 customConfig,
                 logLevel,
                 consulPortsBuilder,
-                advertise)
+                advertise,
+                client)
     }
 
     private void applyDefaults() {

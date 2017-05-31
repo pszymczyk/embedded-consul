@@ -25,6 +25,7 @@ class ConsulStarter {
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
     private final String advertise
+    private final String client
 
     private boolean started = false
 
@@ -39,7 +40,8 @@ class ConsulStarter {
                   String customConfig,
                   LogLevel logLevel,
                   ConsulPorts.ConsulPortsBuilder ports,
-                  String advertise) {
+                  String advertise,
+                  String client) {
         this.logLevel = logLevel
         this.configDir = configDir
         this.customConfig = customConfig
@@ -48,6 +50,7 @@ class ConsulStarter {
         this.consulVersion = consulVersion
         this.consulPorts = mergePorts(ports, customConfig)
         this.advertise = advertise
+        this.client = client
         makeDI()
     }
 
@@ -109,6 +112,7 @@ class ConsulStarter {
                             "-dev",
                             "-config-dir=$configDir",
                             "-advertise=$advertise",
+                            "-client=$client",
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
 
