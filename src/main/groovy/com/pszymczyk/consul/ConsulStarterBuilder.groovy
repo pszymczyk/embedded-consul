@@ -65,12 +65,12 @@ class ConsulStarterBuilder {
         this
     }
 
-    String withAdvertise(String advertise) {
+    ConsulStarterBuilder withAdvertise(String advertise) {
         this.advertise = advertise
         this
     }
 
-    String withClient(String client) {
+    ConsulStarterBuilder withClient(String client) {
         this.client = client
         this
     }
