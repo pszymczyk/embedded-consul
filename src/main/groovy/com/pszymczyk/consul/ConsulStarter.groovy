@@ -16,6 +16,7 @@ import java.nio.file.Path
 class ConsulStarter {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class);
+    private static final Random random = new Random()
 
     private final Path dataDir
     private final Path downloadDir
@@ -24,6 +25,7 @@ class ConsulStarter {
     private final String consulVersion
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
+    private final String startJoin
     private final String advertise
     private final String client
 
@@ -40,6 +42,7 @@ class ConsulStarter {
                   String customConfig,
                   LogLevel logLevel,
                   ConsulPorts.ConsulPortsBuilder ports,
+                  String startJoin,
                   String advertise,
                   String client) {
         this.logLevel = logLevel
@@ -49,6 +52,7 @@ class ConsulStarter {
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
         this.consulPorts = mergePorts(ports, customConfig)
+        this.startJoin = startJoin
         this.advertise = advertise
         this.client = client
         makeDI()
@@ -116,7 +120,13 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
 
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts,
+        if (startJoin != null) {
+            command += "-join=$startJoin"
+            command += "-node=" + randomNodeId()
+            command += "-node-id=" + randomNodeId()
+        }
+
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise,
                 new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
@@ -182,5 +192,17 @@ class ConsulStarter {
 
     private boolean isBinaryDownloaded() {
         return new File(downloadDir.toString(), "consul").exists()
+    }
+
+    private static String randomNodeId() {
+        return randomHex(8) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(12);
+    }
+
+    private static String randomHex(int len) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(Long.toHexString(random.nextInt(16)));
+        }
+        return sb.toString();
     }
 }
