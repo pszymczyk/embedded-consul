@@ -16,6 +16,7 @@ Working on all operating systems: Mac, Linux, Windows.
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
       <version>0.3.4</version>
+      <scope>test</scope>
     </dependency>
 ```
 
