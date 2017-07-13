@@ -34,7 +34,7 @@ If JUnit is on classpath, simplest way to use `embedded-consul` is via
 public class IntegrationTest {
 
     @ClassRule
-    private static final ConsulResource consul = new ConsulResource();
+    public static final ConsulResource consul = new ConsulResource();
 
     private OkHttpClient client = new OkHttpClient();
 
