@@ -16,11 +16,13 @@ import java.nio.file.Path
 class ConsulStarter {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class);
+    private static final Random random = new Random()
 
     private final Path dataDir
     private final Path downloadDir
     private final Path configDir
-    private String customConfig;
+    private final String customConfig;
+    private final Object decodedCustomConfig;
     private final String consulVersion
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
@@ -45,17 +47,18 @@ class ConsulStarter {
         this.logLevel = logLevel
         this.configDir = configDir
         this.customConfig = customConfig
+        this.decodedCustomConfig = parseCustomConfig(customConfig)
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
-        this.consulPorts = mergePorts(ports, customConfig)
+        this.consulPorts = mergePorts(ports)
         this.advertise = advertise
         this.client = client
         makeDI()
     }
 
-    private static ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports, String customConfig) {
-        def extraPorts = parseCustomConfig(customConfig)
+    private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {
+        def extraPorts = decodedCustomConfig["ports"]
 
         extraPorts.collect { it ->
             switch (it.key) {
@@ -76,7 +79,7 @@ class ConsulStarter {
         }
 
         def parser = new JsonSlurper().setType(JsonParserType.LAX)
-        return parser.parseText(customConfig)["ports"]
+        return parser.parseText(customConfig)
     }
 
     private void makeDI() {
@@ -115,6 +118,14 @@ class ConsulStarter {
                             "-client=$client",
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
+
+        if (decodedCustomConfig["node_id"] == null) {
+            command += ["-node-id=" + randomNodeId()]
+        }
+
+        if (decodedCustomConfig["node_name"] == null) {
+            command += ["-node=" + randomNodeName()]
+        }
 
         ConsulProcess process = new ConsulProcess(dataDir, consulPorts,
                 new ProcessBuilder()
@@ -183,4 +194,21 @@ class ConsulStarter {
     private boolean isBinaryDownloaded() {
         return new File(downloadDir.toString(), "consul").exists()
     }
+
+    private static String randomNodeId() {
+        return randomHex(8) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(12);
+    }
+
+    private static String randomNodeName() {
+        return "node-" + randomHex(10)
+    }
+
+    private static String randomHex(int len) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(Long.toHexString(random.nextInt(16)));
+        }
+        return sb.toString();
+    }
+
 }
