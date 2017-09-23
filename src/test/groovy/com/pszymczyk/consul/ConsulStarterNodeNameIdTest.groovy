@@ -12,12 +12,14 @@ public class ConsulStarterNodeNameIdTest extends Specification {
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
         String name1 = new ConsulClient("localhost", consul1.httpPort)
                 .agentSelf.value.config.nodeName;
-        String id1 = nodeId("localhost", consul1.httpPort)
+        String id1 = new ConsulClient("localhost", consul1.httpPort)
+                .agentSelf.value.config.nodeId
 
         ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().build().start()
         String name2 = new ConsulClient("localhost", consul2.httpPort)
                 .agentSelf.value.config.nodeName;
-        String id2 = nodeId("localhost", consul2.httpPort)
+        String id2 = new ConsulClient("localhost", consul2.httpPort)
+                .agentSelf.value.config.nodeId
 
         then:
         name1 != name2
@@ -34,7 +36,8 @@ public class ConsulStarterNodeNameIdTest extends Specification {
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
                 .withCustomConfig("{\"node_id\":\"01234567-890a-bcde-f012-34567890abcd\"}")
                 .build().start()
-        String id = nodeId("localhost", consul.httpPort)
+        String id = new ConsulClient("localhost", consul.httpPort)
+                .agentSelf.value.config.nodeId
 
         then:
         id == "01234567-890a-bcde-f012-34567890abcd"
@@ -56,12 +59,5 @@ public class ConsulStarterNodeNameIdTest extends Specification {
 
         cleanup:
         consul.close()
-    }
-
-    // NodeId is not implemented in com.ecwid.consul.v1.ConsulClient
-    def nodeId(String host, int port) {
-        def parser = new JsonSlurper().setType(JsonParserType.LAX)
-        def url = "http://$host:$port/v1/agent/self"
-        return parser.parseText(new URL(url).text)["Config"]["NodeID"]
     }
 }
