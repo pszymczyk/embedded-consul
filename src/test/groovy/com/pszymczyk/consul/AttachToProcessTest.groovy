@@ -10,15 +10,13 @@ class AttachToProcessTest extends Specification implements AwaitilityTrait {
         when:
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
         ConsulClient consulClient = new ConsulClient(consul1.address, consul1.httpPort)
-
-        then:
-        consulClient.agentMembers.value.size() == 1
-
-        when:
+        int clusterSize1 = consulClient.agentMembers.value.size()
         ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().withAttachedTo(consul1).build().start()
+        int clusterSize2 = consulClient.agentMembers.value.size()
 
         then:
-        consulClient.agentMembers.value.size() == 2
+        clusterSize1 == 1
+        clusterSize2 == 2
 
         cleanup:
         consul1.close()

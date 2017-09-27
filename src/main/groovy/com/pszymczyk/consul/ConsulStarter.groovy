@@ -21,7 +21,8 @@ class ConsulStarter {
     private final Path dataDir
     private final Path downloadDir
     private final Path configDir
-    private String customConfig;
+    private final String customConfig;
+    private final Object decodedCustomConfig;
     private final String consulVersion
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
@@ -48,18 +49,19 @@ class ConsulStarter {
         this.logLevel = logLevel
         this.configDir = configDir
         this.customConfig = customConfig
+        this.decodedCustomConfig = parseCustomConfig(customConfig)
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
-        this.consulPorts = mergePorts(ports, customConfig)
+        this.consulPorts = mergePorts(ports)
         this.startJoin = startJoin
         this.advertise = advertise
         this.client = client
         makeDI()
     }
 
-    private static ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports, String customConfig) {
-        def extraPorts = parseCustomConfig(customConfig)
+    private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {
+        def extraPorts = decodedCustomConfig["ports"]
 
         extraPorts.collect { it ->
             switch (it.key) {
@@ -80,7 +82,7 @@ class ConsulStarter {
         }
 
         def parser = new JsonSlurper().setType(JsonParserType.LAX)
-        return parser.parseText(customConfig)["ports"]
+        return parser.parseText(customConfig)
     }
 
     private void makeDI() {
@@ -122,8 +124,14 @@ class ConsulStarter {
 
         if (startJoin != null) {
             command += "-join=$startJoin"
-            command += "-node=" + randomNodeId()
-            command += "-node-id=" + randomNodeId()
+        }
+
+        if (decodedCustomConfig["node_id"] == null) {
+            command += ["-node-id=" + randomNodeId()]
+        }
+
+        if (decodedCustomConfig["node_name"] == null) {
+            command += ["-node=" + randomNodeName()]
         }
 
         ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise,
@@ -196,6 +204,10 @@ class ConsulStarter {
 
     private static String randomNodeId() {
         return randomHex(8) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(12);
+    }
+
+    private static String randomNodeName() {
+        return "node-" + randomHex(10)
     }
 
     private static String randomHex(int len) {

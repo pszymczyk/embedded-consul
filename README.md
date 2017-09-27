@@ -15,12 +15,13 @@ Working on all operating systems: Mac, Linux, Windows.
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.3.3</version>
+      <version>0.3.4</version>
+      <scope>test</scope>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.3.3'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.3.4'
 ```
 
 ### Usage
@@ -34,7 +35,7 @@ If JUnit is on classpath, simplest way to use `embedded-consul` is via
 public class IntegrationTest {
 
     @ClassRule
-    private static final ConsulResource consul = new ConsulResource();
+    public static final ConsulResource consul = new ConsulResource();
 
     private OkHttpClient client = new OkHttpClient();
 
