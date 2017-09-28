@@ -15,13 +15,13 @@ Working on all operating systems: Mac, Linux, Windows.
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
-      <version>0.3.4</version>
+      <version>0.3.5</version>
       <scope>test</scope>
     </dependency>
 ```
 
 ``` groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:0.3.4'
+    testCompile 'com.pszymczyk.consul:embedded-consul:0.3.5'
 ```
 
 ### Usage
