@@ -14,6 +14,7 @@ class ConsulStarterBuilder {
     private String consulVersion = '0.7.5'
     private LogLevel logLevel = LogLevel.ERR
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
+    private String startJoin
     private String advertise = "127.0.0.1"
     private String client = "127.0.0.1"
 
@@ -65,6 +66,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withAttachedTo(ConsulProcess otherProcess) {
+        this.startJoin = otherProcess == null ? null : "${otherProcess.address}:${otherProcess.serfLanPort}"
+        this
+    }
+
     ConsulStarterBuilder withAdvertise(String advertise) {
         this.advertise = advertise
         this
@@ -84,6 +90,7 @@ class ConsulStarterBuilder {
                 customConfig,
                 logLevel,
                 consulPortsBuilder,
+                startJoin,
                 advertise,
                 client)
     }

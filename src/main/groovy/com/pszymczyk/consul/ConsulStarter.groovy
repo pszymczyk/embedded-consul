@@ -26,6 +26,7 @@ class ConsulStarter {
     private final String consulVersion
     private final LogLevel logLevel
     private final ConsulPorts consulPorts
+    private final String startJoin
     private final String advertise
     private final String client
 
@@ -42,6 +43,7 @@ class ConsulStarter {
                   String customConfig,
                   LogLevel logLevel,
                   ConsulPorts.ConsulPortsBuilder ports,
+                  String startJoin,
                   String advertise,
                   String client) {
         this.logLevel = logLevel
@@ -52,6 +54,7 @@ class ConsulStarter {
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
         this.consulPorts = mergePorts(ports)
+        this.startJoin = startJoin
         this.advertise = advertise
         this.client = client
         makeDI()
@@ -119,6 +122,10 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
 
+        if (startJoin != null) {
+            command += "-join=$startJoin"
+        }
+
         if (decodedCustomConfig["node_id"] == null) {
             command += ["-node-id=" + randomNodeId()]
         }
@@ -127,7 +134,7 @@ class ConsulStarter {
             command += ["-node=" + randomNodeName()]
         }
 
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts,
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise,
                 new ProcessBuilder()
                         .directory(downloadDir.toFile())
                         .command(command)
@@ -210,5 +217,4 @@ class ConsulStarter {
         }
         return sb.toString();
     }
-
 }

@@ -13,12 +13,14 @@ class ConsulProcess implements AutoCloseable {
 
     private final Path dataDir
     private final ConsulPorts consulPorts
+    private final String address
     private final Process process
     private final SimpleConsulClient simpleConsulClient
 
-    ConsulProcess(Path dataDir, ConsulPorts consulPorts, Process process) {
+    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process) {
         this.dataDir = dataDir
         this.consulPorts = consulPorts
+        this.address = address
         this.process = process
         this.simpleConsulClient = new SimpleConsulClient(httpPort)
     }
@@ -45,6 +47,10 @@ class ConsulProcess implements AutoCloseable {
 
     Path getDataDir() {
         dataDir
+    }
+
+    String getAddress() {
+        return address
     }
 
     int getHttpPort() {
