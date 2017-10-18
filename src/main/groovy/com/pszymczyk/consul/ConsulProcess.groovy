@@ -61,10 +61,6 @@ class ConsulProcess implements AutoCloseable {
         consulPorts.dnsPort
     }
 
-    int getRpcPort() {
-        consulPorts.rpcPort
-    }
-
     int getSerfLanPort() {
         consulPorts.serfLanPort
     }

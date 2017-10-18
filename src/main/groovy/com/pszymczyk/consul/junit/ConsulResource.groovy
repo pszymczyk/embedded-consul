@@ -49,10 +49,6 @@ class ConsulResource extends ExternalResource {
         process.dnsPort
     }
 
-    int getRpcPort() {
-        process.rpcPort
-    }
-
     int getSerfLanPort() {
         process.serfLanPort
     }

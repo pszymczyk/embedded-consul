@@ -11,7 +11,6 @@ class ConsulPortsTest extends Specification {
 
         then:
         consulPorts.dnsPort
-        consulPorts.rpcPort
         consulPorts.serfLanPort
         consulPorts.serfWanPort
         consulPorts.serverPort
