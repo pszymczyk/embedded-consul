@@ -1,12 +1,11 @@
 package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class ConsulStarterNodeNameIdTest extends Specification {
 
-    def "should generate random id and name by default"() {
+    def "should generate random name by default"() {
         when:
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
         String name1 = new ConsulClient("localhost", consul1.httpPort)
