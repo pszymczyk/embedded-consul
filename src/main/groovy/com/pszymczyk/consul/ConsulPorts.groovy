@@ -6,15 +6,13 @@ class ConsulPorts {
 
     final int httpPort
     final int dnsPort
-    final int rpcPort
     final int serfLanPort
     final int serfWanPort
     final int serverPort
 
-    private ConsulPorts(int httpPort, int dnsPort, int rpcPort, int serfLanPort, int serfWanPort, int serverPort) {
+    private ConsulPorts(int httpPort, int dnsPort, int serfLanPort, int serfWanPort, int serverPort) {
         this.httpPort = httpPort
         this.dnsPort = dnsPort
-        this.rpcPort = rpcPort
         this.serfLanPort = serfLanPort
         this.serfWanPort = serfWanPort
         this.serverPort = serverPort
@@ -28,7 +26,6 @@ class ConsulPorts {
 
         private int httpPort = -1
         private int dnsPort = -1
-        private int rpcPort = -1
         private int serfLanPort = -1
         private int serfWanPort = -1
         private int serverPort = -1
@@ -40,14 +37,13 @@ class ConsulPorts {
             return new ConsulPorts(
                     randomIfNotSet(httpPort),
                     randomIfNotSet(dnsPort),
-                    randomIfNotSet(rpcPort),
                     randomIfNotSet(serfLanPort),
                     randomIfNotSet(serfWanPort),
                     randomIfNotSet(serverPort)
             )
         }
 
-        private int randomIfNotSet(int port) {
+        private static int randomIfNotSet(int port) {
             return port > 0 ? port : Ports.nextAvailable()
         }
 
@@ -58,11 +54,6 @@ class ConsulPorts {
 
         ConsulPortsBuilder withDnsPort(int dnsPort) {
             this.dnsPort = dnsPort
-            return this
-        }
-
-        ConsulPortsBuilder withRpcPort(int rpcPort) {
-            this.rpcPort = rpcPort
             return this
         }
 
@@ -84,7 +75,6 @@ class ConsulPorts {
         ConsulPortsBuilder fromConsulPorts(ConsulPorts consulPorts) {
             this.httpPort = consulPorts.httpPort
             this.dnsPort = consulPorts.dnsPort
-            this.rpcPort = consulPorts.rpcPort
             this.serfLanPort = consulPorts.serfLanPort
             this.serfWanPort = consulPorts.serfWanPort
             this.serverPort = consulPorts.serverPort

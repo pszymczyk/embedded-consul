@@ -35,7 +35,7 @@ class SimpleConsulClient {
     }
 
     void deregister(String id) {
-        http.get(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
+        http.put(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
     }
 
     void clearKvStore() {
@@ -57,7 +57,7 @@ class SimpleConsulClient {
         response.getData().each {
             def id = it.key
 
-            http.get(path: "/v1/agent/check/deregister/$id", contentType: ContentType.ANY)
+            http.put(path: "/v1/agent/check/deregister/$id", contentType: ContentType.ANY)
         }
     }
 }

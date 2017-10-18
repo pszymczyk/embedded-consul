@@ -62,11 +62,7 @@ class ConsulStarterTest extends Specification {
         consul.reset()
 
         then:
-        consulClient.getAgentServices().value.size() == 1
-        consulClient.getAgentServices().value.values().with {
-            it.size() == 1
-            it.first().service == 'consul'
-        }
+        consulClient.getAgentServices().value.size() == 0
     }
 
     def "should remove all data from kv store when reset Consul process"() {
@@ -97,7 +93,7 @@ class ConsulStarterTest extends Specification {
         given:
         NewCheck newCheck = new NewCheck()
         newCheck.name = "test-check"
-        newCheck.ttl = "15s"
+        newCheck.interval = "10s"
         newCheck.http = "http://example.com"
 
         consulClient.agentCheckRegister(newCheck)

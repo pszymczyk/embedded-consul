@@ -67,7 +67,6 @@ class ConsulStarter {
             switch (it.key) {
                 case "dns": ports = ports.withDnsPort(it.value); break
                 case "http": ports = ports.withHttpPort(it.value); break
-                case "rpc": ports = ports.withRpcPort(it.value); break
                 case "serf_lan": ports = ports.withSerfLanPort(it.value); break
                 case "serf_wan": ports = ports.withSerfWanPort(it.value); break
                 case "server": ports = ports.withServerPort(it.value); break
@@ -179,7 +178,6 @@ class ConsulStarter {
             {
                 "ports": {
                     "dns": ${consulPorts.dnsPort},
-                    "rpc": ${consulPorts.rpcPort},
                     "serf_lan": ${consulPorts.serfLanPort},
                     "serf_wan": ${consulPorts.serfWanPort},
                     "server": ${consulPorts.serverPort}
