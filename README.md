@@ -25,6 +25,28 @@ Working on all operating systems: Mac, Linux, Windows.
 ```
 
 ### Usage
+#### Spring Boot setup
+
+``` java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SpringBootIntegrationTest {
+
+    @BeforeClass
+    public static void setup() {
+        consul = ConsulStarterBuilder.consulStarter().build().start();
+
+        System.setProperty("spring.cloud.consul.enabled", "true");
+        System.setProperty("spring.cloud.consul.host", "localhost");
+        System.setProperty("spring.cloud.consul.port", String.valueOf(consul.getHttpPort()));
+    }
+
+    @Test
+    public void doSomethingWithSpring(){
+        //use your spring beans
+    }    
+}
+```
 
 #### JUnit Rule
 
