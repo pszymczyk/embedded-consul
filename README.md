@@ -181,11 +181,14 @@ Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/b
 
     {
         "ports": {
-            "dns": 64294,
-            "rpc": 64295,
-            "serf_lan": 64296,
-            "serf_wan": 64297,
-            "server": 64298
+            "dns": 50084,
+            "serf_lan": 50085,
+            "serf_wan": 50086,
+            "server": 50087
+        },
+        "disable_update_check": true,
+        "performance": {
+            "raft_multiplier": 1
         }
     }
 
