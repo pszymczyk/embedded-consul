@@ -1,5 +1,7 @@
 package com.pszymczyk.consul
 
+import org.slf4j.Logger
+
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -13,6 +15,7 @@ class ConsulStarterBuilder {
     private String customConfig
     private String consulVersion = '1.0.2'
     private LogLevel logLevel = LogLevel.ERR
+    private Logger customLogger
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
     private String startJoin
     private String advertise = "127.0.0.1"
@@ -28,6 +31,11 @@ class ConsulStarterBuilder {
 
     ConsulStarterBuilder withLogLevel(LogLevel logLevel) {
         this.logLevel = logLevel
+        this
+    }
+
+    ConsulStarterBuilder withLogger(Logger customLogger) {
+        this.customLogger = customLogger
         this
     }
 
@@ -89,6 +97,7 @@ class ConsulStarterBuilder {
                 consulVersion,
                 customConfig,
                 logLevel,
+                customLogger,
                 consulPortsBuilder,
                 startJoin,
                 advertise,

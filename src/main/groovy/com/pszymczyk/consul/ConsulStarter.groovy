@@ -21,14 +21,16 @@ class ConsulStarter {
     private final Path dataDir
     private final Path downloadDir
     private final Path configDir
-    private final String customConfig;
-    private final Object decodedCustomConfig;
+    private final String customConfig
+    private final Object decodedCustomConfig
     private final String consulVersion
     private final LogLevel logLevel
+    private final Logger customLogger
     private final ConsulPorts consulPorts
     private final String startJoin
     private final String advertise
     private final String client
+    private final ConsulLogHandler logHandler
 
     private boolean started = false
 
@@ -42,11 +44,13 @@ class ConsulStarter {
                   String consulVersion,
                   String customConfig,
                   LogLevel logLevel,
+                  Logger customLogger,
                   ConsulPorts.ConsulPortsBuilder ports,
                   String startJoin,
                   String advertise,
                   String client) {
         this.logLevel = logLevel
+        this.customLogger = customLogger
         this.configDir = configDir
         this.customConfig = customConfig
         this.decodedCustomConfig = parseCustomConfig(customConfig)
@@ -58,6 +62,8 @@ class ConsulStarter {
         this.advertise = advertise
         this.client = client
         makeDI()
+
+        this.logHandler = new ConsulLogHandler(customLogger)
     }
 
     private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {
@@ -133,12 +139,15 @@ class ConsulStarter {
             command += ["-node=" + randomNodeName()]
         }
 
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise,
-                new ProcessBuilder()
-                        .directory(downloadDir.toFile())
-                        .command(command)
-                        .inheritIO()
-                        .start())
+        Process innerProcess = new ProcessBuilder()
+            .directory(downloadDir.toFile())
+            .command(command)
+            .inheritIO()
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .start()
+
+        logHandler.handleStream(innerProcess.getInputStream())
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess)
 
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
         new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStarted()
@@ -209,7 +218,7 @@ class ConsulStarter {
     }
 
     private static String randomHex(int len) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder()
         for (int i = 0; i < len; i++) {
             sb.append(Long.toHexString(random.nextInt(16)));
         }
