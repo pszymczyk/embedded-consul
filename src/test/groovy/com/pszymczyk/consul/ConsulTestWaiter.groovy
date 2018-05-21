@@ -12,9 +12,9 @@ class ConsulTestWaiter extends ConsulWaiter {
 
     ConsulClient consulClient
 
-    ConsulTestWaiter(int port) {
-        super(port)
-        this.consulClient = new ConsulClient("localhost", port)
+    ConsulTestWaiter(String host, int port) {
+        super(host, port)
+        this.consulClient = new ConsulClient(host, port)
     }
 
     void awaitUntilServiceRegistered(String id) {

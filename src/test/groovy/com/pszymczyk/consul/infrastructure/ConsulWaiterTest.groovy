@@ -8,7 +8,7 @@ class ConsulWaiterTest extends Specification {
 
     def "should throw exception when timed out"() {
         when:
-        new ConsulWaiter(0, 1).awaitUntilConsulStarted()
+        new ConsulWaiter("localhost", 0, 1).awaitUntilConsulStarted()
 
         then:
         def ex = thrown EmbeddedConsulException

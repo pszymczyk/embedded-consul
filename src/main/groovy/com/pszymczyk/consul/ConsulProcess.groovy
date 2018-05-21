@@ -22,7 +22,7 @@ class ConsulProcess implements AutoCloseable {
         this.consulPorts = consulPorts
         this.address = address
         this.process = process
-        this.simpleConsulClient = new SimpleConsulClient(httpPort)
+        this.simpleConsulClient = new SimpleConsulClient(address, httpPort)
     }
     /**
      * Deregister all services except consul.
@@ -40,7 +40,7 @@ class ConsulProcess implements AutoCloseable {
 
         process.destroy()
 
-        new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStopped() == true ?
+        new ConsulWaiter(address, consulPorts.httpPort).awaitUntilConsulStopped() ?
                 logger.info("Stopped Consul process") :
                 logger.warn("Can't stop Consul process running on port {}", consulPorts.httpPort)
     }

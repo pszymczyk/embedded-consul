@@ -10,8 +10,8 @@ class SimpleConsulClient {
 
     private final RESTClient http
 
-    SimpleConsulClient(int httpPort) {
-        this.http = new RESTClient("http://localhost:$httpPort")
+    SimpleConsulClient(String host, int httpPort) {
+        this.http = new RESTClient("http://$host:$httpPort")
     }
 
     boolean isLeaderElected() {
