@@ -4,9 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification
 
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
 
 class ConsulLogHandlerTest extends Specification {
 
@@ -38,34 +36,30 @@ class ConsulLogHandlerTest extends Specification {
         given:
         final PrintWriter writer = output.newPrintWriter()
         final String testCase = "2018/05/21 14:35:47 [DEBUG] Skipping remote check \"serfHealth\" since it is managed automatically"
-        final CompletableFuture<Boolean> handle = new CompletableFuture<>()
 
         when:
         logger.debug("testCase: {}", testCase)
         writer.println(testCase)
         writer.flush()
-        handle.get(10, TimeUnit.SECONDS)
+        Thread.sleep(1_000L)
 
         then:
-        1 * mockLogger.debug("Skipping remote check \"serfHealth\" since it is managed automatically") >>
-            { args -> handle.complete(true) }
+        1 * mockLogger.debug("Skipping remote check \"serfHealth\" since it is managed automatically")
     }
 
     def "should handle consul startup log with slf4j logger"() {
         given:
         final PrintWriter writer = output.newPrintWriter()
         final String testCase = "==> Starting Consul agent..."
-        final CompletableFuture<Boolean> handle = new CompletableFuture<>()
 
         when:
         logger.debug("testCase: {}", testCase)
         writer.println(testCase)
         writer.flush()
-        handle.get(10, TimeUnit.SECONDS)
+        Thread.sleep(1_000L)
 
         then:
-        1 * mockLogger.info("==> Starting Consul agent...") >>
-            { args -> handle.complete(true) }
+        1 * mockLogger.info("==> Starting Consul agent...")
     }
 
     def "should handle logs"() {
