@@ -5,7 +5,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 [![Build Status](https://travis-ci.org/pszymczyk/embedded-consul.svg?branch=master)](https://travis-ci.org/pszymczyk/embedded-consul)
 
 
-Built on Consul 1.0.2 <br />
+Built on Consul 1.1.0 <br />
 Compatible with jdk1.7+. <br />
 Working on all operating systems: Mac, Linux, Windows.
 
