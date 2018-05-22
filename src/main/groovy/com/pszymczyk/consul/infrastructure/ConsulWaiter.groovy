@@ -10,17 +10,19 @@ class ConsulWaiter {
     static final int DEFAULT_WAITING_TIME_IN_SECONDS = 30
 
     private final SimpleConsulClient simpleConsulClient
-    private final int timeoutMilis
+    private final long timeoutMilis
+    private final String host
     private final int port
 
-    ConsulWaiter(int port) {
-        this(port, DEFAULT_WAITING_TIME_IN_SECONDS)
+    ConsulWaiter(String host, int port) {
+        this(host, port, DEFAULT_WAITING_TIME_IN_SECONDS)
     }
 
-    ConsulWaiter(int port, int timeoutInSeconds) {
+    ConsulWaiter(String host, int port, int timeoutInSeconds) {
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
+        this.host = host
         this.port = port
-        this.simpleConsulClient = new SimpleConsulClient(port)
+        this.simpleConsulClient = new SimpleConsulClient(host, port)
     }
 
     void awaitUntilConsulStarted() {
@@ -39,10 +41,10 @@ class ConsulWaiter {
         Long startTime = System.currentTimeMillis()
         while (!isTimedOut(startTime)) {
             try {
-                IOGroovyMethods.withCloseable(new Socket("localhost", port), {
+                IOGroovyMethods.withCloseable(new Socket(host, port), {
                     it -> Thread.sleep(100)
                 })
-            } catch (IOException ex) {
+            } catch (IOException ignore) {
                 return true
             }
         }
@@ -54,7 +56,7 @@ class ConsulWaiter {
         try {
             boolean elected = simpleConsulClient.isLeaderElected()
             elected
-        } catch (def e) {
+        } catch (def ignore) {
             false
         }
 
@@ -63,7 +65,7 @@ class ConsulWaiter {
     private boolean allNodesRegistered() {
         try {
             simpleConsulClient.getRegisteredNodes().first().TaggedAddresses != null
-        } catch (def e) {
+        } catch (def ignore) {
             false
         }
     }

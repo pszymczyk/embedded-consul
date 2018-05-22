@@ -18,6 +18,7 @@ class ConsulStarterBuilder {
     private Logger customLogger
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
     private String startJoin
+    private String bind
     private String advertise = "127.0.0.1"
     private String client = "127.0.0.1"
 
@@ -89,6 +90,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withBind(String bind) {
+        this.bind = bind
+        this
+    }
+
     ConsulStarter build() {
         applyDefaults()
         return new ConsulStarter(dataDir,
@@ -101,7 +107,8 @@ class ConsulStarterBuilder {
                 consulPortsBuilder,
                 startJoin,
                 advertise,
-                client)
+                client,
+                bind)
     }
 
     private void applyDefaults() {

@@ -25,7 +25,7 @@ class ConsulStarterTest extends Specification {
           }
         }"""
         consul = ConsulStarterBuilder.consulStarter().withCustomConfig(conf).build().start()
-        consulWaiter = new ConsulTestWaiter(consul.httpPort)
+        consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
         consulClient = new ConsulClient('localhost', consul.httpPort)
     }
 

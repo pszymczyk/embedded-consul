@@ -30,6 +30,7 @@ class ConsulStarter {
     private final String startJoin
     private final String advertise
     private final String client
+    private final String bind
     private final ConsulLogHandler logHandler
 
     private boolean started = false
@@ -48,7 +49,8 @@ class ConsulStarter {
                   ConsulPorts.ConsulPortsBuilder ports,
                   String startJoin,
                   String advertise,
-                  String client) {
+                  String client,
+                  String bind) {
         this.logLevel = logLevel
         this.customLogger = customLogger
         this.configDir = configDir
@@ -61,6 +63,7 @@ class ConsulStarter {
         this.startJoin = startJoin
         this.advertise = advertise
         this.client = client
+        this.bind = bind
         makeDI()
 
         this.logHandler = new ConsulLogHandler(customLogger)
@@ -127,6 +130,10 @@ class ConsulStarter {
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}"]
 
+        if (bind != null) {
+            command += "-bind=$bind"
+        }
+
         if (startJoin != null) {
             command += "-join=$startJoin"
         }
@@ -150,7 +157,7 @@ class ConsulStarter {
         ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess)
 
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        new ConsulWaiter(consulPorts.httpPort).awaitUntilConsulStarted()
+        new ConsulWaiter(advertise, consulPorts.httpPort).awaitUntilConsulStarted()
         logger.info("Consul process started")
 
         return process
