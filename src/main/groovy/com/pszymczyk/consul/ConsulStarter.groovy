@@ -168,7 +168,7 @@ class ConsulStarter {
             throw new EmbeddedConsulException('This Consul Starter instance already started Consul process. Create new ConsulStarter instance')
         }
         try {
-            IOGroovyMethods.withCloseable(new Socket("localhost", consulPorts.httpPort), {
+            IOGroovyMethods.withCloseable(new Socket(bind ?: "localhost", consulPorts.httpPort), {
                 it-> throw new EmbeddedConsulException("Port ${consulPorts.httpPort} is not available, cannot start Consul process.")
             })
         } catch (IOException ex) {

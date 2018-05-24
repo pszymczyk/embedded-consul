@@ -33,26 +33,35 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
     def "should run multiple Consul processes with same port simultaneously"() {
         when:
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter()
+                .withBind("127.0.0.1")
+                .withClient("127.0.0.1")
+                .withAdvertise("127.0.0.1")
+                .build().start()
+        ConsulClient consulClient1 = new ConsulClient("127.0.0.1", consul1.httpPort)
+        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter()
+                .withHttpPort(consul1.httpPort)
                 .withBind("127.0.0.10")
                 .withClient("127.0.0.10")
                 .withAdvertise("127.0.0.10")
                 .build().start()
-        ConsulClient consulClient1 = new ConsulClient("127.0.0.10", consul1.httpPort)
-        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter()
-                .withHttpPort(consul1.httpPort)
+        ConsulClient consulClient2 = new ConsulClient("127.0.0.10", consul2.httpPort)
+        ConsulProcess consul3 = ConsulStarterBuilder.consulStarter()
+                .withHttpPort(consul2.httpPort)
                 .withBind("127.0.0.11")
                 .withClient("127.0.0.11")
                 .withAdvertise("127.0.0.11")
                 .build().start()
-        ConsulClient consulClient2 = new ConsulClient("127.0.0.11", consul2.httpPort)
+        ConsulClient consulClient3 = new ConsulClient("127.0.0.11", consul3.httpPort)
 
         then:
-        consulClient1.getStatusPeers().getValue().get(0).startsWith("127.0.0.10:")
-        consulClient2.getStatusPeers().getValue().get(0).startsWith("127.0.0.11:")
+        consulClient1.getStatusPeers().getValue().get(0).startsWith("127.0.0.1:")
+        consulClient2.getStatusPeers().getValue().get(0).startsWith("127.0.0.10:")
+        consulClient3.getStatusPeers().getValue().get(0).startsWith("127.0.0.11:")
 
         cleanup:
         consul1.close()
         consul2.close()
+        consul3.close()
     }
 
     def "reset should not remove data from another process"() {
