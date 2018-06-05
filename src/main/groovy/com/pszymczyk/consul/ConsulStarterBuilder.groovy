@@ -12,7 +12,7 @@ class ConsulStarterBuilder {
     private Path dataDir
     private Path downloadDir
     private Path configDir
-    private String customConfig
+    private CustomConfig customConfig = CustomConfig.empty()
     private String consulVersion = '1.1.0'
     private LogLevel logLevel = LogLevel.ERR
     private Logger customLogger
@@ -61,7 +61,7 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withCustomConfig(String customConfig) {
-        this.customConfig = customConfig
+        this.customConfig = new CustomConfig(customConfig)
         this
     }
 

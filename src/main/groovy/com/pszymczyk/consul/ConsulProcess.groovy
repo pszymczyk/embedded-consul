@@ -3,9 +3,9 @@ package com.pszymczyk.consul
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.SimpleConsulClient
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory
 
-import java.nio.file.Path;
+import java.nio.file.Path
 
 class ConsulProcess implements AutoCloseable {
 

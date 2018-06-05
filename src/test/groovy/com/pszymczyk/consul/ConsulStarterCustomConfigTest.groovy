@@ -6,7 +6,7 @@ import spock.lang.Specification
 import java.nio.file.Files
 import java.nio.file.Path
 
-public class ConsulStarterCustomConfigTest extends Specification {
+class ConsulStarterCustomConfigTest extends Specification {
 
     def "should apply new custom config when restart with same config dir"() {
         given:

@@ -4,8 +4,6 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -21,8 +19,7 @@ class ConsulStarter {
     private final Path dataDir
     private final Path downloadDir
     private final Path configDir
-    private final String customConfig
-    private final Object decodedCustomConfig
+    private final CustomConfig customConfig
     private final String consulVersion
     private final LogLevel logLevel
     private final Logger customLogger
@@ -43,7 +40,7 @@ class ConsulStarter {
                   Path downloadDir,
                   Path configDir,
                   String consulVersion,
-                  String customConfig,
+                  CustomConfig customConfig,
                   LogLevel logLevel,
                   Logger customLogger,
                   ConsulPorts.ConsulPortsBuilder ports,
@@ -55,7 +52,6 @@ class ConsulStarter {
         this.customLogger = customLogger
         this.configDir = configDir
         this.customConfig = customConfig
-        this.decodedCustomConfig = parseCustomConfig(customConfig)
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.consulVersion = consulVersion
@@ -70,7 +66,7 @@ class ConsulStarter {
     }
 
     private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {
-        def extraPorts = decodedCustomConfig["ports"]
+        def extraPorts = customConfig.get("ports")
 
         extraPorts.collect { it ->
             switch (it.key) {
@@ -82,15 +78,6 @@ class ConsulStarter {
             }
         }
         ports.build()
-    }
-
-    private static def parseCustomConfig(String customConfig) {
-        if (customConfig == null || customConfig.isEmpty()) {
-            return [:]
-        }
-
-        def parser = new JsonSlurper().setType(JsonParserType.LAX)
-        return parser.parseText(customConfig)
     }
 
     private void makeDI() {
@@ -109,7 +96,7 @@ class ConsulStarter {
         }
 
         createBasicConfigFile(consulPorts)
-        if (customConfig != null) {
+        if (!customConfig.isEmpty()) {
             createExtraConfigFile()
         }
 
@@ -138,11 +125,11 @@ class ConsulStarter {
             command += "-join=$startJoin"
         }
 
-        if (decodedCustomConfig["node_id"] == null) {
+        if (customConfig.get("node_id") == null) {
             command += ["-node-id=" + randomNodeId()]
         }
 
-        if (decodedCustomConfig["node_name"] == null) {
+        if (customConfig.get("node_name") == null) {
             command += ["-node=" + randomNodeName()]
         }
 
@@ -209,7 +196,7 @@ class ConsulStarter {
     private void createExtraConfigFile() {
         File customConfigFile = new File(configDir.toFile(), "extra_config.json")
         logger.info("Creating custom configuration file: {}", customConfigFile.toString())
-        customConfigFile.text = customConfig
+        customConfigFile.text = customConfig.asString()
     }
 
     private boolean isBinaryDownloaded() {
