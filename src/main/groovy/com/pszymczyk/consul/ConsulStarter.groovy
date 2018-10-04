@@ -200,7 +200,12 @@ class ConsulStarter {
     }
 
     private boolean isBinaryDownloaded() {
-        return new File(downloadDir.toString(), "consul").exists()
+        return getConsulBinary().exists()
+    }
+
+    File getConsulBinary() {
+        String consulBinaryName = OsResolver.resolve().equals("windows") ? "consul.exe" : "consul"
+        return new File(downloadDir.toString(), consulBinaryName)
     }
 
     private static String randomNodeId() {
