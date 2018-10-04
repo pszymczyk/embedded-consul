@@ -105,4 +105,28 @@ class ConsulStarterTest extends Specification {
         then:
         consulClient.getAgentChecks().value.isEmpty()
     }
+
+    def "should provide proper consul binary for windows"() {
+        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build();
+        given:
+        System.setProperty("os.name", "windows");
+
+        when:
+        File binaryPath = starter.getConsulBinary()
+
+        then:
+        binaryPath.getName() == "consul.exe"
+    }
+
+    def "should provide proper consul binary for linux"() {
+        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build();
+        given:
+        System.setProperty("os.name", "linux");
+
+        when:
+        File binaryPath = starter.getConsulBinary()
+
+        then:
+        binaryPath.getName() == "consul"
+    }
 }
