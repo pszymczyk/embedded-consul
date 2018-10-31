@@ -9,11 +9,11 @@ class ConsulStarterNodeNameIdTest extends Specification {
         when:
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
         String name1 = new ConsulClient("localhost", consul1.httpPort)
-                .agentSelf.value.config.nodeName;
+                .agentSelf.value.config.nodeName
 
         ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().build().start()
         String name2 = new ConsulClient("localhost", consul2.httpPort)
-                .agentSelf.value.config.nodeName;
+                .agentSelf.value.config.nodeName
 
         then:
         name1 != name2
@@ -30,7 +30,7 @@ class ConsulStarterNodeNameIdTest extends Specification {
                 .withCustomConfig("{\"node_name\":\"custom_node_name\"}")
                 .build().start()
         String name = new ConsulClient("localhost", consul.httpPort)
-                .agentSelf.value.config.nodeName;
+                .agentSelf.value.config.nodeName
 
         then:
         name == "custom_node_name"

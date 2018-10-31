@@ -14,10 +14,10 @@ import java.nio.file.Path
 
 class ConsulExtension implements ParameterResolver, AfterAllCallback, AfterEachCallback {
 
-    private final ConsulProcess process;
+    private final ConsulProcess process
 
     ConsulExtension(ConsulStarter consulStarter) {
-        this.process = consulStarter.start();
+        this.process = consulStarter.start()
     }
 
     ConsulExtension() {

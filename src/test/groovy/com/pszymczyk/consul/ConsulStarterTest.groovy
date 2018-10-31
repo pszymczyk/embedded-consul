@@ -107,9 +107,9 @@ class ConsulStarterTest extends Specification {
     }
 
     def "should provide proper consul binary for windows"() {
-        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build();
+        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build()
         given:
-        System.setProperty("os.name", "windows");
+        System.setProperty("os.name", "windows")
 
         when:
         File binaryPath = starter.getConsulBinary()
@@ -119,9 +119,9 @@ class ConsulStarterTest extends Specification {
     }
 
     def "should provide proper consul binary for linux"() {
-        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build();
+        ConsulStarter starter = ConsulStarterBuilder.consulStarter().build()
         given:
-        System.setProperty("os.name", "linux");
+        System.setProperty("os.name", "linux")
 
         when:
         File binaryPath = starter.getConsulBinary()
