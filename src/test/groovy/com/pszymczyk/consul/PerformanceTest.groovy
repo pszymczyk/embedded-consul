@@ -8,7 +8,7 @@ class PerformanceTest extends Specification {
     @Ignore
     def "should time starting Consul process"() {
         given:
-        def start = System.currentTimeMillis();
+        def start = System.currentTimeMillis()
 
         when:
         (1..10).each {

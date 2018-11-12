@@ -6,7 +6,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 
 
 Built on Consul 1.1.0 <br />
-Compatible with jdk1.7+. <br />
+Compatible with jdk1.8+. <br />
 Working on all operating systems: Mac, Linux, Windows.
 
 ### How to get it?
@@ -63,6 +63,53 @@ public class IntegrationTest {
 
     @Test
     public void shouldStartConsul() throws Throwable {
+        await().atMost(30, TimeUnit.SECONDS).until(() -> {
+            Request request = new Request.Builder()
+                    .url("http://localhost:" + consul.getHttpPort() + "/v1/agent/self")
+                    .build();
+
+            return client.newCall(request).execute().code() == 200;
+        });
+    }
+}
+```
+
+#### JUnit 5 Extension
+
+There is also an [extension](https://junit.org/junit5/docs/current/user-guide/#extensions) for JUnit 5.
+Unlike in Junit 4 with `@Rule` and `@ClassRule` there is no option to control the scope of `ConsulProcess`.
+`ConsulExtension` starts Consul for a whole class just like `@ClassRule`, but it resets the Consul state between tests.
+
+``` java
+class IntegrationTest {
+
+    @RegisterExtension
+    ConsulExtension consul = new ConsulExtension();
+
+    private OkHttpClient client = new OkHttpClient();
+
+    @Test
+    void shouldStartConsul() throws Throwable {
+        await().atMost(30, TimeUnit.SECONDS).until(() -> {
+            Request request = new Request.Builder()
+                    .url("http://localhost:" + consul.getHttpPort() + "/v1/agent/self")
+                    .build();
+
+            return client.newCall(request).execute().code() == 200;
+        });
+    }
+}
+```
+
+The extension can also be registered via `@ExtendWith` annotation and provided to test as a method argument
+
+``` java
+@ExtendWith(ConsulExtension.class)
+class IntegrationTest {
+
+    @Test
+    void test(ConsulProcess consul) {
+        OkHttpClient client = new OkHttpClient();
         await().atMost(30, TimeUnit.SECONDS).until(() -> {
             Request request = new Request.Builder()
                     .url("http://localhost:" + consul.getHttpPort() + "/v1/agent/self")

@@ -18,7 +18,7 @@ class ConsulStarterCustomConfigTest extends Specification {
 
         String host = "localhost"
 
-        Path tempDir = Files.createTempDirectory("for_test_extra_config");
+        Path tempDir = Files.createTempDirectory("for_test_extra_config")
 
         when:
         ConsulStarter starter = ConsulStarterBuilder.consulStarter()
@@ -27,7 +27,7 @@ class ConsulStarterCustomConfigTest extends Specification {
             .build()
         ConsulProcess consul = starter.start()
         String datacenter = new ConsulClient(host, consul.getHttpPort())
-                                .getDatacenters().getValue().first().getDatacenter();
+                                .getDatacenters().getValue().first().getDatacenter()
         consul.close()
 
         ConsulStarter anotherStarter = ConsulStarterBuilder.consulStarter()
@@ -36,7 +36,7 @@ class ConsulStarterCustomConfigTest extends Specification {
             .build()
         ConsulProcess anotherConsul = anotherStarter.start()
         String anotherDatacenter = new ConsulClient(host, anotherConsul.getHttpPort())
-                                        .getDatacenters().getValue().first().getDatacenter();
+                                        .getDatacenters().getValue().first().getDatacenter()
         anotherConsul.close()
 
         then:
