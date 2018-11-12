@@ -1,17 +1,36 @@
 package com.pszymczyk.consul.infrastructure
 
 import groovyx.net.http.ContentType
+import groovyx.net.http.EncoderRegistry
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class SimpleConsulClient {
 
-    private static final String NO_LEADER_ELECTED_RESPONSE = "";
+    private static final String NO_LEADER_ELECTED_RESPONSE = ""
 
     private final RESTClient http
+    private final String token
 
-    SimpleConsulClient(String host, int httpPort) {
+    SimpleConsulClient(String host, int httpPort, String token) {
         this.http = new RESTClient("http://$host:$httpPort")
+
+        this.token = token
+        if (token != null) {
+            this.http.setHeaders('X-Consul-Token': token)
+        }
+
+        def originalParser = this.http.parser.getAt(ContentType.JSON)
+        this.http.parser.putAt(ContentType.JSON, { HttpResponseDecorator resp ->
+            if (resp.status >= 200 && resp.status < 300 ){
+                return originalParser(resp)
+            } else {
+                throw new GroovyRuntimeException("Unexpected response status code: ${resp.status}:" +
+                        " ${resp.getEntity().getContent().getText("UTF-8")}")
+            }
+        })
     }
 
     boolean isLeaderElected() {

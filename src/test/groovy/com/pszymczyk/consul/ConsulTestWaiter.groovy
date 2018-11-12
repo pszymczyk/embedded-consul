@@ -13,7 +13,7 @@ class ConsulTestWaiter extends ConsulWaiter {
     ConsulClient consulClient
 
     ConsulTestWaiter(String host, int port) {
-        super(host, port)
+        super(host, port, null)
         this.consulClient = new ConsulClient(host, port)
     }
 

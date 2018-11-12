@@ -16,13 +16,15 @@ class ConsulProcess implements AutoCloseable {
     private final String address
     private final Process process
     private final SimpleConsulClient simpleConsulClient
+    private final String token
 
-    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process) {
+    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, String token, Process process) {
         this.dataDir = dataDir
         this.consulPorts = consulPorts
         this.address = address
         this.process = process
-        this.simpleConsulClient = new SimpleConsulClient(address, httpPort)
+        this.token = token
+        this.simpleConsulClient = new SimpleConsulClient(address, httpPort, token)
     }
     /**
      * Deregister all services except consul.
@@ -40,7 +42,7 @@ class ConsulProcess implements AutoCloseable {
 
         process.destroy()
 
-        new ConsulWaiter(address, consulPorts.httpPort).awaitUntilConsulStopped() ?
+        new ConsulWaiter(address, consulPorts.httpPort, token).awaitUntilConsulStopped() ?
                 logger.info("Stopped Consul process") :
                 logger.warn("Can't stop Consul process running on port {}", consulPorts.httpPort)
     }

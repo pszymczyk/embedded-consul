@@ -15,14 +15,22 @@ class ConsulWaiter {
     private final int port
 
     ConsulWaiter(String host, int port) {
-        this(host, port, DEFAULT_WAITING_TIME_IN_SECONDS)
+        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
+    }
+
+    ConsulWaiter(String host, int port, String token) {
+        this(host, port, token, DEFAULT_WAITING_TIME_IN_SECONDS)
     }
 
     ConsulWaiter(String host, int port, int timeoutInSeconds) {
+        this(host, port, null, timeoutInSeconds)
+    }
+
+    ConsulWaiter(String host, int port, String token, int timeoutInSeconds) {
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
         this.host = host
         this.port = port
-        this.simpleConsulClient = new SimpleConsulClient(host, port)
+        this.simpleConsulClient = new SimpleConsulClient(host, port, token)
     }
 
     void awaitUntilConsulStarted() {

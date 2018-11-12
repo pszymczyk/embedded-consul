@@ -13,7 +13,7 @@ import java.nio.file.Path
 
 class ConsulStarter {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class)
     private static final Random random = new Random()
 
     private final Path dataDir
@@ -28,6 +28,8 @@ class ConsulStarter {
     private final String advertise
     private final String client
     private final String bind
+    private final String token
+    private final Integer waitTimeout
     private final ConsulLogHandler logHandler
 
     private boolean started = false
@@ -47,7 +49,9 @@ class ConsulStarter {
                   String startJoin,
                   String advertise,
                   String client,
-                  String bind) {
+                  String bind,
+                  String token,
+                  Integer waitTimeout) {
         this.logLevel = logLevel
         this.customLogger = customLogger
         this.configDir = configDir
@@ -60,6 +64,8 @@ class ConsulStarter {
         this.advertise = advertise
         this.client = client
         this.bind = bind
+        this.token = token
+        this.waitTimeout = waitTimeout
         makeDI()
 
         this.logHandler = new ConsulLogHandler(customLogger)
@@ -141,13 +147,17 @@ class ConsulStarter {
             .start()
 
         logHandler.handleStream(innerProcess.getInputStream())
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess)
-
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, token, innerProcess)
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        new ConsulWaiter(advertise, consulPorts.httpPort).awaitUntilConsulStarted()
-        logger.info("Consul process started")
-
-        return process
+        try {
+            new ConsulWaiter(advertise, consulPorts.httpPort, token, waitTimeout).awaitUntilConsulStarted()
+            logger.info("Consul process started")
+            return process
+        } catch (Throwable e) {
+            // in case there is error, we should kill the process
+            process.close()
+            throw e
+        }
     }
 
     private void checkInitialState() {
