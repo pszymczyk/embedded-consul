@@ -240,3 +240,8 @@ Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/b
     }
 
 ```
+
+### JDK 1.7.x support
+
+Support for older Java versions has been dropped throughout release `2.0.0`. 
+If you'd like to use `embedded-consul` with JDK 1.7 the `1.1.1` would be the last  appropriate version.
