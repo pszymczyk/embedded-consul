@@ -1,6 +1,7 @@
 package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.QueryParams
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 
 import java.util.concurrent.TimeUnit
@@ -20,6 +21,12 @@ class ConsulTestWaiter extends ConsulWaiter {
     void awaitUntilServiceRegistered(String id) {
         await().atMost(30, TimeUnit.SECONDS).until({
             consulClient.getAgentServices().getValue().values().findAll({ id == it.id }).size() == 1
+        })
+    }
+
+    void awaitConsulServiceRegistered() {
+        await().atMost(30, TimeUnit.SECONDS).until({
+            !consulClient.getCatalogServices(QueryParams.DEFAULT).getValue().isEmpty()
         })
     }
 }

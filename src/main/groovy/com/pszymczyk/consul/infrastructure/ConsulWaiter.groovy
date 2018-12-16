@@ -1,6 +1,7 @@
 package com.pszymczyk.consul.infrastructure
 
-import com.pszymczyk.consul.EmbeddedConsulException
+import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
+import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import org.codehaus.groovy.runtime.IOGroovyMethods
 
 import java.util.concurrent.TimeUnit
@@ -14,26 +15,18 @@ class ConsulWaiter {
     private final String host
     private final int port
 
-    ConsulWaiter(String host, int port) {
-        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
-    }
-
     ConsulWaiter(String host, int port, String token) {
         this(host, port, token, DEFAULT_WAITING_TIME_IN_SECONDS)
-    }
-
-    ConsulWaiter(String host, int port, int timeoutInSeconds) {
-        this(host, port, null, timeoutInSeconds)
     }
 
     ConsulWaiter(String host, int port, String token, int timeoutInSeconds) {
         this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
         this.host = host
         this.port = port
-        this.simpleConsulClient = new SimpleConsulClient(host, port, token)
+        this.simpleConsulClient = ConsulClientFactory.newClient(host, port, token)
     }
 
-    void awaitUntilConsulStarted() {
+    boolean awaitUntilConsulStarted() {
         Long startTime = System.currentTimeMillis()
 
         boolean elected
@@ -42,7 +35,7 @@ class ConsulWaiter {
             Thread.sleep(100)
         }
 
-        if (!elected) abnormalTerminate("Could not start Consul process")
+        return elected
     }
 
     boolean awaitUntilConsulStopped() {
@@ -80,10 +73,5 @@ class ConsulWaiter {
 
     protected boolean isTimedOut(long startTime) {
         System.currentTimeMillis() - startTime >= timeoutMilis
-    }
-
-    protected void abnormalTerminate(String message) {
-        long timeoutInSeconds = TimeUnit.MILLISECONDS.toSeconds(timeoutMilis)
-        throw new EmbeddedConsulException("$message in $timeoutInSeconds seconds")
     }
 }

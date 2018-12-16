@@ -1,7 +1,8 @@
 package com.pszymczyk.consul
 
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
-import com.pszymczyk.consul.infrastructure.SimpleConsulClient
+import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
+import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -24,7 +25,7 @@ class ConsulProcess implements AutoCloseable {
         this.address = address
         this.process = process
         this.token = token
-        this.simpleConsulClient = new SimpleConsulClient(address, httpPort, token)
+        this.simpleConsulClient = ConsulClientFactory.newClient(address, httpPort, token)
     }
     /**
      * Deregister all services except consul.
