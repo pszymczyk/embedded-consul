@@ -24,9 +24,9 @@ class ConsulTestWaiter extends ConsulWaiter {
         })
     }
 
-    void awaitConsulServiceRegistered() {
+    void awaitConsulServiceRegistered(String token = null) {
         await().atMost(30, TimeUnit.SECONDS).until({
-            !consulClient.getCatalogServices(QueryParams.DEFAULT).getValue().isEmpty()
+            !consulClient.getCatalogServices(QueryParams.DEFAULT, token).getValue().isEmpty()
         })
     }
 }

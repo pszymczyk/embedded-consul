@@ -36,7 +36,7 @@ class ConsulTokenTest extends Specification {
         ConsulTestWaiter consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
 
         then:
-        consulWaiter.awaitConsulServiceRegistered()
+        consulWaiter.awaitConsulServiceRegistered(uuid)
         noExceptionThrown()
 
         cleanup:
