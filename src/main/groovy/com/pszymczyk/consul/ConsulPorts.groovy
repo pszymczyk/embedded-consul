@@ -9,13 +9,15 @@ class ConsulPorts {
     final int serfLanPort
     final int serfWanPort
     final int serverPort
+    final int grpcPort
 
-    private ConsulPorts(int httpPort, int dnsPort, int serfLanPort, int serfWanPort, int serverPort) {
+    private ConsulPorts(int httpPort, int dnsPort, int serfLanPort, int serfWanPort, int serverPort, int grpcPort) {
         this.httpPort = httpPort
         this.dnsPort = dnsPort
         this.serfLanPort = serfLanPort
         this.serfWanPort = serfWanPort
         this.serverPort = serverPort
+        this.grpcPort = grpcPort;
     }
 
     static ConsulPortsBuilder consulPorts() {
@@ -29,6 +31,7 @@ class ConsulPorts {
         private int serfLanPort = -1
         private int serfWanPort = -1
         private int serverPort = -1
+        private int grpcPort = -1
 
         private ConsulPortsBuilder() {
         }
@@ -39,7 +42,8 @@ class ConsulPorts {
                     randomIfNotSet(dnsPort),
                     randomIfNotSet(serfLanPort),
                     randomIfNotSet(serfWanPort),
-                    randomIfNotSet(serverPort)
+                    randomIfNotSet(serverPort),
+                    -1
             )
         }
 
@@ -72,12 +76,18 @@ class ConsulPorts {
             return this
         }
 
+        ConsulPortsBuilder withGRpcPort(int grpcPort) {
+            this.grpcPort = grpcPort
+            return this
+        }
+
         ConsulPortsBuilder fromConsulPorts(ConsulPorts consulPorts) {
             this.httpPort = consulPorts.httpPort
             this.dnsPort = consulPorts.dnsPort
             this.serfLanPort = consulPorts.serfLanPort
             this.serfWanPort = consulPorts.serfWanPort
             this.serverPort = consulPorts.serverPort
+            this.grpcPort = consulPorts.grpcPort
             return this
         }
     }
