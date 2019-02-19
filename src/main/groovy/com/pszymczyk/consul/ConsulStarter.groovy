@@ -10,7 +10,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import java.nio.file.Path
-import java.util.concurrent.TimeUnit
 
 class ConsulStarter {
 
@@ -150,17 +149,9 @@ class ConsulStarter {
         logHandler.handleStream(innerProcess.getInputStream())
         ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, token, innerProcess)
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        boolean consulStarted = new ConsulWaiter(advertise, consulPorts.httpPort, token, waitTimeout).awaitUntilConsulStarted()
-
-        if (consulStarted) {
-            logger.info("Consul process started")
-            return process
-        } else {
-            // in case there is error, we should kill the process
-            process.close()
-            long timeoutInSeconds = TimeUnit.MILLISECONDS.toSeconds(waitTimeout)
-            throw new EmbeddedConsulException("Could not start Consul in $timeoutInSeconds seconds")
-        }
+        new ConsulWaiter(advertise, consulPorts.httpPort, token, waitTimeout).awaitUntilConsulStarted()
+        logger.info("Consul process started")
+        return process
     }
 
     private void checkInitialState() {

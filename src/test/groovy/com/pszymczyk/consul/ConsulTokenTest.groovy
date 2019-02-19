@@ -9,34 +9,21 @@ import java.nio.charset.Charset
 
 class ConsulTokenTest extends Specification {
 
-
-    /**
-     * TODO: Config for ACL will be changed since 1.4.0, so we will have to change these tests,
-     * once we set default consul version to 1.4.0 or higher
-     */
     def "should start secured consul with configured token"() {
         when:
-        def uuid = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-          "acl_datacenter": "us",
-          "acl_default_policy": "deny",
-          "acl_agent_master_token": ${uuid},
-          "acl_master_token": ${uuid},
-          "acl_agent_token": ${uuid},
-          "acl_enable_key_list_policy": true,
-          "acl_down_policy": "deny"
-        }"""
+        def token = UUID.randomUUID().toString()
+        def conf = consulWithACL(token)
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
-                .withToken(uuid)
+                .withToken(token)
                 .withCustomConfig(conf)
-                .build().start()
+                .build()
+                .start()
 
         ConsulTestWaiter consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
 
         then:
-        consulWaiter.awaitConsulServiceRegistered(uuid)
+        consulWaiter.awaitConsulServiceRegistered(token)
         noExceptionThrown()
 
         cleanup:
@@ -47,14 +34,7 @@ class ConsulTokenTest extends Specification {
         when:
         def token = UUID.randomUUID().toString()
         def wrongToken = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-          "acl_datacenter": "us",
-          "acl_default_policy": "deny",
-          "acl_master_token": ${token},
-          "acl_enable_key_list_policy": true,
-          "acl_down_policy": "deny"
-        }"""
+        def conf = consulWithACL(token)
 
         ConsulStarterBuilder.consulStarter()
                 .withToken(wrongToken)
@@ -71,13 +51,9 @@ class ConsulTokenTest extends Specification {
     def "should start consul without token"() {
         when:
         def token = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-        }"""
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
                 .withToken(token)
-                .withCustomConfig(conf)
                 .build().start()
 
         ConsulTestWaiter consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
@@ -93,14 +69,8 @@ class ConsulTokenTest extends Specification {
     def "unable to start secured consul without token"() {
         when:
         def token = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-          "acl_datacenter": "us",
-          "acl_default_policy": "deny",
-          "acl_master_token": ${token},
-          "acl_enable_key_list_policy": true,
-          "acl_down_policy": "deny"
-        }"""
+        def conf = consulWithACL(token)
+
 
         ConsulStarterBuilder.consulStarter()
                 .withCustomConfig(conf)
@@ -113,18 +83,11 @@ class ConsulTokenTest extends Specification {
 
     def "client should not call secured consul without ACL"() {
         when:
-        def uuid = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-          "acl_datacenter": "us",
-          "acl_default_policy": "deny",
-          "acl_master_token": ${uuid},
-          "acl_agent_master_token": ${uuid},
-          "acl_agent_token": ${uuid}
-        }"""
+        def token = UUID.randomUUID().toString()
+        def conf = consulWithACL(token)
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
-                .withToken(uuid)
+                .withToken(token)
                 .withCustomConfig(conf)
                 .build().start()
 
@@ -143,27 +106,20 @@ class ConsulTokenTest extends Specification {
 
     def "client should be able to call secured consul with correct ACL"() {
         when:
-        def uuid = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us",
-          "acl_datacenter": "us",
-          "acl_default_policy": "deny",
-          "acl_master_token": ${uuid},
-          "acl_agent_master_token": ${uuid},
-          "acl_agent_token": ${uuid}
-        }"""
+        def token = UUID.randomUUID().toString()
+        def conf = consulWithACL(token)
 
         final String key = "key"
         final String value = "value"
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
-                .withToken(uuid)
+                .withToken(token)
                 .withCustomConfig(conf)
                 .build().start()
 
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
-        consulClient.setKVValue(key, value, uuid, new PutParams())
-        String actualValue = consulClient.getKVValue(key, uuid).getValue().getDecodedValue(Charset.defaultCharset())
+        consulClient.setKVValue(key, value, token, new PutParams())
+        String actualValue = consulClient.getKVValue(key, token).getValue().getDecodedValue(Charset.defaultCharset())
 
         then:
         noExceptionThrown()
@@ -175,22 +131,18 @@ class ConsulTokenTest extends Specification {
 
     def "client should be able to call unsecured consul without token"() {
         when:
-        def uuid = UUID.randomUUID().toString()
-        def conf = """{
-          "datacenter": "us"
-        }"""
+        def token = UUID.randomUUID().toString()
 
         final String key = "key"
         final String value = "value"
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
-                .withToken(uuid)
-                .withCustomConfig(conf)
+                .withToken(token)
                 .build().start()
 
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
-        consulClient.setKVValue(key, value, uuid, new PutParams())
-        String actualValue = consulClient.getKVValue(key, uuid).getValue().getDecodedValue(Charset.defaultCharset())
+        consulClient.setKVValue(key, value, token, new PutParams())
+        String actualValue = consulClient.getKVValue(key, token).getValue().getDecodedValue(Charset.defaultCharset())
 
         then:
         noExceptionThrown()
@@ -203,15 +155,10 @@ class ConsulTokenTest extends Specification {
 
     def "client should be able to call unsecured consul with token"() {
         when:
-        def conf = """{
-          "datacenter": "us"
-        }"""
-
         final String key = "key"
         final String value = "value"
 
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
-                .withCustomConfig(conf)
                 .build().start()
 
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
@@ -226,4 +173,15 @@ class ConsulTokenTest extends Specification {
         consul.close()
     }
 
+    private GString consulWithACL(token) {
+        return """{
+          "acl": {
+            "enabled": true,
+            "default_policy": "deny",
+            "down_policy": "deny",
+            "tokens": {
+                "master": ${token}
+            }
+        }"""
+    }
 }

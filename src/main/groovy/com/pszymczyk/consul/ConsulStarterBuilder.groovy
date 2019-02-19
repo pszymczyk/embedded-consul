@@ -13,7 +13,7 @@ class ConsulStarterBuilder {
     private Path downloadDir
     private Path configDir
     private CustomConfig customConfig = CustomConfig.empty()
-    private String consulVersion = '1.1.0'
+    private String consulVersion = '1.4.2'
     private LogLevel logLevel = LogLevel.ERR
     private Logger customLogger
     private ConsulPorts.ConsulPortsBuilder consulPortsBuilder = ConsulPorts.consulPorts()
@@ -22,7 +22,7 @@ class ConsulStarterBuilder {
     private String advertise = "127.0.0.1"
     private String client = "127.0.0.1"
     private String token
-    private Long waitTimeout
+    private Integer waitTimeout
 
     private ConsulStarterBuilder() {
 
@@ -138,11 +138,6 @@ class ConsulStarterBuilder {
 
         if (configDir == null) {
             configDir = Files.createTempDirectory("embedded-consul-config-dir")
-        }
-
-        if (consulPortsBuilder == null) {
-            //TODO
-            this.consulPortsBuilder = ConsulPorts.create()
         }
     }
 }
