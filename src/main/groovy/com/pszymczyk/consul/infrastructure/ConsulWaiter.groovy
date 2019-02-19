@@ -1,5 +1,6 @@
 package com.pszymczyk.consul.infrastructure
 
+import com.pszymczyk.consul.EmbeddedConsulException
 import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
 import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import org.codehaus.groovy.runtime.IOGroovyMethods
@@ -15,27 +16,35 @@ class ConsulWaiter {
     private final String host
     private final int port
 
+    ConsulWaiter(String host, int port) {
+        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
+    }
+
+    ConsulWaiter(String host, int port, Integer timeoutInSeconds) {
+        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
+    }
+
     ConsulWaiter(String host, int port, String token) {
         this(host, port, token, DEFAULT_WAITING_TIME_IN_SECONDS)
     }
 
-    ConsulWaiter(String host, int port, String token, int timeoutInSeconds) {
-        this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds as long)
+    ConsulWaiter(String host, int port, String token, Integer timeoutInSeconds) {
+        this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds == null ? DEFAULT_WAITING_TIME_IN_SECONDS : timeoutInSeconds as long)
         this.host = host
         this.port = port
         this.simpleConsulClient = ConsulClientFactory.newClient(host, port, token)
     }
 
-    boolean awaitUntilConsulStarted() {
+    void awaitUntilConsulStarted() {
         Long startTime = System.currentTimeMillis()
 
         boolean elected
 
-        while ((elected = isLeaderElected() && allNodesRegistered()) == false && !isTimedOut(startTime)) {
+        while (!(elected = isLeaderElected() && allNodesRegistered()) && !isTimedOut(startTime)) {
             Thread.sleep(100)
         }
 
-        return elected
+        if (!elected) abnormalTerminate("Could not start Consul process")
     }
 
     boolean awaitUntilConsulStopped() {
@@ -73,5 +82,10 @@ class ConsulWaiter {
 
     protected boolean isTimedOut(long startTime) {
         System.currentTimeMillis() - startTime >= timeoutMilis
+    }
+
+    protected void abnormalTerminate(String message) {
+        long timeoutInSeconds = TimeUnit.MILLISECONDS.toSeconds(timeoutMilis)
+        throw new EmbeddedConsulException("$message in $timeoutInSeconds seconds")
     }
 }

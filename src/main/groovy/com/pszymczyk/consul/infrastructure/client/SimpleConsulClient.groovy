@@ -29,7 +29,7 @@ class SimpleConsulClient {
         response.getData()
     }
 
-    Collection getServicesIds() {
+    Collection<String> getServicesIds() {
         HttpResponseDecorator response = http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
 
         response.getData()

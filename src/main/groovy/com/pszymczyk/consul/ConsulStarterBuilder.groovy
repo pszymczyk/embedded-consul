@@ -22,7 +22,7 @@ class ConsulStarterBuilder {
     private String advertise = "127.0.0.1"
     private String client = "127.0.0.1"
     private String token
-    private Integer waitTimeout = 30
+    private Long waitTimeout
 
     private ConsulStarterBuilder() {
 
@@ -102,7 +102,7 @@ class ConsulStarterBuilder {
         this
     }
 
-    ConsulStarterBuilder withWaitTimeout(Integer timeoutSeconds) {
+    ConsulStarterBuilder withWaitTimeout(long timeoutSeconds) {
         this.waitTimeout = timeoutSeconds
         this
     }
@@ -141,6 +141,7 @@ class ConsulStarterBuilder {
         }
 
         if (consulPortsBuilder == null) {
+            //TODO
             this.consulPortsBuilder = ConsulPorts.create()
         }
     }
