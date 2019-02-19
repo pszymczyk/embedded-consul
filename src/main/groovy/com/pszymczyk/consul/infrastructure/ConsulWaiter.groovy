@@ -1,5 +1,6 @@
 package com.pszymczyk.consul.infrastructure
 
+import com.pszymczyk.consul.ConsulProcess
 import com.pszymczyk.consul.EmbeddedConsulException
 import org.codehaus.groovy.runtime.IOGroovyMethods
 
@@ -30,11 +31,11 @@ class ConsulWaiter {
 
         boolean elected
 
-        while ((elected = isLeaderElected() && allNodesRegistered()) == false && !isTimedOut(startTime)) {
+        while (!(elected = isLeaderElected() && allNodesRegistered()) && !isTimedOut(startTime)) {
             Thread.sleep(100)
         }
 
-        if (!elected) abnormalTerminate("Could not start Consul process")
+        if (!elected) abnormalTerminate()
     }
 
     boolean awaitUntilConsulStopped() {
@@ -74,8 +75,9 @@ class ConsulWaiter {
         System.currentTimeMillis() - startTime >= timeoutMilis
     }
 
-    protected void abnormalTerminate(String message) {
+    protected void abnormalTerminate(ConsulProcess consulProcess) {
         long timeoutInSeconds = TimeUnit.MILLISECONDS.toSeconds(timeoutMilis)
-        throw new EmbeddedConsulException("$message in $timeoutInSeconds seconds")
+        consulProcess.close()
+        throw new EmbeddedConsulException("Could not start Consul process in $timeoutInSeconds seconds")
     }
 }
