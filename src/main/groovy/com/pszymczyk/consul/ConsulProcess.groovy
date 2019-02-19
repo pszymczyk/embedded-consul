@@ -15,14 +15,20 @@ class ConsulProcess implements AutoCloseable {
     private final ConsulPorts consulPorts
     private final String address
     private final Process process
+    private final ConsulLogHandler consulLogHandler
     private final SimpleConsulClient simpleConsulClient
 
-    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process) {
+    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process, ConsulLogHandler consulLogHandler) {
         this.dataDir = dataDir
         this.consulPorts = consulPorts
         this.address = address
         this.process = process
+        this.consulLogHandler = consulLogHandler
         this.simpleConsulClient = new SimpleConsulClient(address, httpPort)
+        addShutdownHook {
+            process.destroy()
+            consulLogHandler.close()
+        }
     }
     /**
      * Deregister all services except consul.
@@ -39,6 +45,7 @@ class ConsulProcess implements AutoCloseable {
         logger.info("Stopping Consul process")
 
         process.destroy()
+        consulLogHandler.close()
 
         new ConsulWaiter(address, consulPorts.httpPort).awaitUntilConsulStopped() ?
                 logger.info("Stopped Consul process") :
