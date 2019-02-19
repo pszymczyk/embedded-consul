@@ -43,7 +43,7 @@ class ConsulPorts {
                     randomIfNotSet(serfLanPort),
                     randomIfNotSet(serfWanPort),
                     randomIfNotSet(serverPort),
-                    -1
+                    randomIfNotSet(grpcPort)
             )
         }
 
