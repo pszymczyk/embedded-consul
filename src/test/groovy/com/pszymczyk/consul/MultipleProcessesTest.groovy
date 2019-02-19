@@ -36,6 +36,7 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
                 .withBind("127.0.0.1")
                 .withClient("127.0.0.1")
                 .withAdvertise("127.0.0.1")
+                .withWaitTimeout(5)
                 .build().start()
         ConsulClient consulClient1 = new ConsulClient("127.0.0.1", consul1.httpPort)
         ConsulProcess consul2 = ConsulStarterBuilder.consulStarter()
@@ -43,6 +44,7 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
                 .withBind("127.0.0.10")
                 .withClient("127.0.0.10")
                 .withAdvertise("127.0.0.10")
+                .withWaitTimeout(5)
                 .build().start()
         ConsulClient consulClient2 = new ConsulClient("127.0.0.10", consul2.httpPort)
         ConsulProcess consul3 = ConsulStarterBuilder.consulStarter()
@@ -50,6 +52,7 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
                 .withBind("127.0.0.11")
                 .withClient("127.0.0.11")
                 .withAdvertise("127.0.0.11")
+                .withWaitTimeout(5)
                 .build().start()
         ConsulClient consulClient3 = new ConsulClient("127.0.0.11", consul3.httpPort)
 

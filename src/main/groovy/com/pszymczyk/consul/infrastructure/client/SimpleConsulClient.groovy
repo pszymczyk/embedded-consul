@@ -1,17 +1,20 @@
-package com.pszymczyk.consul.infrastructure
+package com.pszymczyk.consul.infrastructure.client
 
 import groovyx.net.http.ContentType
+import groovyx.net.http.EncoderRegistry
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class SimpleConsulClient {
 
-    private static final String NO_LEADER_ELECTED_RESPONSE = "";
+    private static final String NO_LEADER_ELECTED_RESPONSE = ""
 
     private final RESTClient http
 
-    SimpleConsulClient(String host, int httpPort) {
-        this.http = new RESTClient("http://$host:$httpPort")
+    SimpleConsulClient(RESTClient http) {
+        this.http = http
     }
 
     boolean isLeaderElected() {
