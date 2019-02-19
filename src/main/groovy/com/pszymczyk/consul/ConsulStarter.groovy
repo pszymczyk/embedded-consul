@@ -134,19 +134,18 @@ class ConsulStarter {
         }
 
         Process innerProcess = new ProcessBuilder()
-            .directory(downloadDir.toFile())
-            .command(command)
-            .inheritIO()
-            .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            .start()
+                .directory(downloadDir.toFile())
+                .command(command)
+                .inheritIO()
+                .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                .start()
 
         logHandler.handleStream(innerProcess.getInputStream())
+
         ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess)
-
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        new ConsulWaiter(advertise, consulPorts.httpPort).awaitUntilConsulStarted()
+        new ConsulWaiter(advertise, consulPorts.httpPort).awaitUntilConsulStarted(process)
         logger.info("Consul process started")
-
         return process
     }
 
@@ -156,7 +155,7 @@ class ConsulStarter {
         }
         try {
             IOGroovyMethods.withCloseable(new Socket(bind ?: "localhost", consulPorts.httpPort), {
-                it-> throw new EmbeddedConsulException("Port ${consulPorts.httpPort} is not available, cannot start Consul process.")
+                it -> throw new EmbeddedConsulException("Port ${consulPorts.httpPort} is not available, cannot start Consul process.")
             })
         } catch (IOException ex) {
             // socket is free - everything ok

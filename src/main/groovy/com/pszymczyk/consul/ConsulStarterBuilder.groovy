@@ -124,9 +124,5 @@ class ConsulStarterBuilder {
         if (configDir == null) {
             configDir = Files.createTempDirectory("embedded-consul-config-dir")
         }
-
-        if (consulPortsBuilder == null) {
-            this.consulPortsBuilder = ConsulPorts.create()
-        }
     }
 }
