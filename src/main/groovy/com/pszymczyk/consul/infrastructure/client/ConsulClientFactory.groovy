@@ -1,31 +1,33 @@
 package com.pszymczyk.consul.infrastructure.client
 
 
-import groovyx.net.http.RESTClient
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
 
 class ConsulClientFactory {
 
-    static SimpleConsulClient newClient(String host, int httpPort, String token) {
-        RESTClient restClient = new RESTClient("http://$host:$httpPort")
-        if (token != null) {
-            restClient.setHeaders('X-Consul-Token': token)
-            extendParser(restClient)
-        }
+    static SimpleConsulClient newClient(String host, int httpPort, Optional<String> token) {
+        RESTClient restClient = new RESTClient("http://$host:$httpPort", ContentType.JSON)
+        handleForbiddenAccess(restClient)
+        handleGenericFailure(restClient)
+        addTokenIfNecessary(restClient, token)
         return new SimpleConsulClient(restClient)
     }
 
-    private static extendParser(RESTClient restClient) {
-        def originalParser = restClient.parser.getAt(ContentType.JSON)
-        restClient.parser.putAt(ContentType.JSON, { HttpResponseDecorator resp ->
-            if (resp.status >= 200 && resp.status < 300 ){
-                return originalParser(resp)
-            } else {
-                throw new GroovyRuntimeException("Unexpected response status code: ${resp.status}:" +
-                        " ${resp.getEntity().getContent().getText("UTF-8")}")
-            }
-        })
+    private static void handleForbiddenAccess(RESTClient restClient) {
+        restClient.handler.'403' = { HttpResponseDecorator resp ->
+            throw new ConsulACLForbiddenAccess(resp)
+        }
+    }
+
+    private static void handleGenericFailure(RESTClient restClient) {
+        restClient.handler.failure = { HttpResponseDecorator resp ->
+            throw new ConsulClientException(resp)
+        }
+    }
+
+    private static void addTokenIfNecessary(RESTClient restClient, Optional<String> token) {
+        token.ifPresent({ restClient.setHeaders('X-Consul-Token': it) })
     }
 }

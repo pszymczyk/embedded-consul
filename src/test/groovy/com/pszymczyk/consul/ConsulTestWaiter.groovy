@@ -2,7 +2,9 @@ package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
+import com.ecwid.consul.v1.catalog.CatalogServicesRequest
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
+import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
 
 import java.util.concurrent.TimeUnit
 
@@ -14,7 +16,7 @@ class ConsulTestWaiter extends ConsulWaiter {
     ConsulClient consulClient
 
     ConsulTestWaiter(String host, int port) {
-        super(host, port)
+        super(host, port, ConsulClientFactory.newClient(host, port, Optional.empty()), Optional.ofNullable(2))
         this.consulClient = new ConsulClient(host, port)
     }
 
@@ -24,9 +26,11 @@ class ConsulTestWaiter extends ConsulWaiter {
         })
     }
 
-    void awaitConsulServiceRegistered(String token = null) {
+    void awaitConsulServiceRegistered(Optional<String> token) {
         await().atMost(30, TimeUnit.SECONDS).until({
-            !consulClient.getCatalogServices(QueryParams.DEFAULT, token).getValue().isEmpty()
+            def builder = CatalogServicesRequest.newBuilder().setQueryParams(QueryParams.DEFAULT)
+            token.ifPresent({ builder.setToken(it) })
+            consulClient.getCatalogServices(builder.build()).getValue().keySet().contains("consul")
         })
     }
 }

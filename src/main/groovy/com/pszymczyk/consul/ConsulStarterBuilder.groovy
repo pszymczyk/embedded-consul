@@ -102,7 +102,7 @@ class ConsulStarterBuilder {
         this
     }
 
-    ConsulStarterBuilder withWaitTimeout(long timeoutSeconds) {
+    ConsulStarterBuilder withWaitTimeout(int timeoutSeconds) {
         this.waitTimeout = timeoutSeconds
         this
     }

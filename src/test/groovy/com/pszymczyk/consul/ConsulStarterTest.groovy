@@ -29,15 +29,11 @@ class ConsulStarterTest extends Specification {
         consulClient = new ConsulClient('localhost', consul.httpPort)
     }
 
-    def cleanupSpec() {
-        consul.close()
-    }
-
     def "should start consul"() {
         expect:
-        consulClient.statusLeader().getValue().startsWith("127.0.0.1:")
-        consulClient.getCatalogDatacenters().getValue().contains("test-dc")
-        consul.getDnsPort() == 12121
+        consulClient.statusLeader.value.startsWith("127.0.0.1:")
+        consulClient.catalogDatacenters.value.contains("test-dc")
+        consul.dnsPort == 12121
         !consulClient.getCatalogNodes(QueryParams.DEFAULT).getValue().isEmpty()
     }
 
@@ -62,7 +58,7 @@ class ConsulStarterTest extends Specification {
         consul.reset()
 
         then:
-        consulClient.getAgentServices().value.size() == 0
+        consulClient.agentServices.value.size() == 0
     }
 
     def "should remove all data from kv store when reset Consul process"() {
@@ -103,7 +99,7 @@ class ConsulStarterTest extends Specification {
         consul.reset()
 
         then:
-        consulClient.getAgentChecks().value.isEmpty()
+        consulClient.agentChecks.value.isEmpty()
     }
 
     def "should provide proper consul binary for windows"() {
@@ -124,7 +120,7 @@ class ConsulStarterTest extends Specification {
         System.setProperty("os.name", "linux")
 
         when:
-        File binaryPath = starter.getConsulBinary()
+        File binaryPath = starter.consulBinary
 
         then:
         binaryPath.getName() == "consul"

@@ -4,6 +4,8 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
+import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
+import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -149,9 +151,11 @@ class ConsulStarter {
             .start()
 
         logHandler.handleStream(innerProcess.getInputStream())
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, token, innerProcess)
+        SimpleConsulClient consulClient = ConsulClientFactory.newClient(advertise, consulPorts.httpPort, Optional.ofNullable(token))
+        ConsulWaiter consulWaiter = new ConsulWaiter(advertise, consulPorts.httpPort, consulClient, Optional.ofNullable(waitTimeout))
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess, consulClient, consulWaiter)
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        new ConsulWaiter(advertise, consulPorts.httpPort, token, waitTimeout).awaitUntilConsulStarted()
+        consulWaiter.awaitUntilConsulStarted()
         logger.info("Consul process started")
         return process
     }

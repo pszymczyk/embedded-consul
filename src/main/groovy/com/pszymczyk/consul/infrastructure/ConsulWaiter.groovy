@@ -1,7 +1,6 @@
 package com.pszymczyk.consul.infrastructure
 
 import com.pszymczyk.consul.EmbeddedConsulException
-import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
 import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import org.codehaus.groovy.runtime.IOGroovyMethods
 
@@ -16,23 +15,11 @@ class ConsulWaiter {
     private final String host
     private final int port
 
-    ConsulWaiter(String host, int port) {
-        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
-    }
-
-    ConsulWaiter(String host, int port, Integer timeoutInSeconds) {
-        this(host, port, null, DEFAULT_WAITING_TIME_IN_SECONDS)
-    }
-
-    ConsulWaiter(String host, int port, String token) {
-        this(host, port, token, DEFAULT_WAITING_TIME_IN_SECONDS)
-    }
-
-    ConsulWaiter(String host, int port, String token, Integer timeoutInSeconds) {
-        this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds == null ? DEFAULT_WAITING_TIME_IN_SECONDS : timeoutInSeconds as long)
+    ConsulWaiter(String host, int port, SimpleConsulClient simpleConsulClient, Optional<Integer> timeoutInSeconds) {
+        this.timeoutMilis = TimeUnit.SECONDS.toMillis(timeoutInSeconds.orElse(DEFAULT_WAITING_TIME_IN_SECONDS) as long)
         this.host = host
         this.port = port
-        this.simpleConsulClient = ConsulClientFactory.newClient(host, port, token)
+        this.simpleConsulClient = simpleConsulClient
     }
 
     void awaitUntilConsulStarted() {
