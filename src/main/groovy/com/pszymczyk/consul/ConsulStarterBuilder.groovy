@@ -114,7 +114,7 @@ class ConsulStarterBuilder {
 
     ConsulStarter build() {
         applyDefaults()
-        return new ConsulStarter(dataDir,
+        return new ConsulStarter(new UserInput(dataDir,
                 downloadDir,
                 configDir,
                 consulVersion,
@@ -127,7 +127,7 @@ class ConsulStarterBuilder {
                 client,
                 bind,
                 token,
-                waitTimeout)
+                waitTimeout))
     }
 
     private void applyDefaults() {
