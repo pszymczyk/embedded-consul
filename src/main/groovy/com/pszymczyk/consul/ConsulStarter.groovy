@@ -81,6 +81,7 @@ class ConsulStarter {
                 case "serf_lan": ports = ports.withSerfLanPort(it.value); break
                 case "serf_wan": ports = ports.withSerfWanPort(it.value); break
                 case "server": ports = ports.withServerPort(it.value); break
+                case "grpc": ports = ports.withGRpcPort(it.value); break
             }
         }
         ports.build()
@@ -121,7 +122,8 @@ class ConsulStarter {
                             "-advertise=$advertise",
                             "-client=$client",
                             "-log-level=$logLevel.value",
-                            "-http-port=${consulPorts.httpPort}"]
+                            "-http-port=${consulPorts.httpPort}",
+                            "-grpc-port=${consulPorts.grpcPort}"]
 
         if (bind != null) {
             command += "-bind=$bind"

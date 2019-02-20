@@ -24,8 +24,10 @@ class ConsulProcess implements AutoCloseable {
         this.consulPorts = consulPorts
         this.address = address
         this.process = process
-        this.token = token
         this.simpleConsulClient = ConsulClientFactory.newClient(address, httpPort, token)
+
+        this.token = token
+        addShutdownHook { this.process.destroyForcibly()}
     }
     /**
      * Deregister all services except consul.
