@@ -213,6 +213,10 @@ class ConsulStarter {
         return getConsulBinary().exists()
     }
 
+    /**
+     * It's internal ConsulStarter property - will be hidden in coming versions
+     */
+    @Deprecated
     File getConsulBinary() {
         String consulBinaryName = OsResolver.resolve().equals("windows") ? "consul.exe" : "consul"
         return new File(downloadDir.toString(), consulBinaryName)

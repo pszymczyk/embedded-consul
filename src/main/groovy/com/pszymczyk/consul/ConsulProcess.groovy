@@ -10,11 +10,12 @@ import java.nio.file.Path
 
 class ConsulProcess implements AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsulProcess.class)
 
-    private final Path dataDir
+    final Path dataDir
+    final String address
+
     private final ConsulPorts consulPorts
-    private final String address
     private final Process process
     private final SimpleConsulClient simpleConsulClient
     private final ConsulWaiter consulWaiter
@@ -48,14 +49,6 @@ class ConsulProcess implements AutoCloseable {
         consulWaiter.awaitUntilConsulStopped() ?
                 logger.info("Stopped Consul process") :
                 logger.warn("Can't stop Consul process running on port {}", consulPorts.httpPort)
-    }
-
-    Path getDataDir() {
-        dataDir
-    }
-
-    String getAddress() {
-        return address
     }
 
     int getHttpPort() {
