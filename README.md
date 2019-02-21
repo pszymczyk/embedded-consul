@@ -190,6 +190,12 @@ An environment variable can be set to change the consul CDN:
 # default
 export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
 ```
+Proxy can be used if necessary.
+```
+https.proxyHost=localhost 
+https.proxyPort=3128
+```
+
 
 ### Files structure
 
