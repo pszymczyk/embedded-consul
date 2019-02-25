@@ -1,33 +1,35 @@
-package com.pszymczyk.consul.infrastructure
+package com.pszymczyk.consul.infrastructure.client
 
+import groovy.transform.PackageScope
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
 
 class SimpleConsulClient {
 
-    private static final String NO_LEADER_ELECTED_RESPONSE = "";
+    private static final String NO_LEADER_ELECTED_RESPONSE = ""
 
     private final RESTClient http
 
-    SimpleConsulClient(String host, int httpPort) {
-        this.http = new RESTClient("http://$host:$httpPort")
+    @PackageScope
+    SimpleConsulClient(RESTClient http) {
+        this.http = http
     }
 
     boolean isLeaderElected() {
-        HttpResponseDecorator response = http.get(path: '/v1/status/leader', contentType: ContentType.JSON)
+        HttpResponseDecorator response = http.get(path: '/v1/status/leader')
 
         response.getData() != NO_LEADER_ELECTED_RESPONSE
     }
 
     Collection getRegisteredNodes() {
-        HttpResponseDecorator response = http.get(path: '/v1/catalog/nodes', contentType: ContentType.JSON)
+        HttpResponseDecorator response = http.get(path: '/v1/catalog/nodes')
 
         response.getData()
     }
 
-    Collection getServicesIds() {
-        HttpResponseDecorator response = http.get(path: '/v1/agent/services', contentType: ContentType.JSON)
+    Collection<String> getServicesIds() {
+        HttpResponseDecorator response = http.get(path: '/v1/agent/services')
 
         response.getData()
                 .keySet()
@@ -43,7 +45,7 @@ class SimpleConsulClient {
     }
 
     void destroyActiveSessions() {
-        HttpResponseDecorator response = http.get(path: "/v1/session/list", contentType: ContentType.JSON)
+        HttpResponseDecorator response = http.get(path: "/v1/session/list")
 
         response.getData().each {
             def id = it.ID
@@ -52,12 +54,12 @@ class SimpleConsulClient {
     }
 
     void deregisterAllChecks() {
-        HttpResponseDecorator response = http.get(path: "/v1/agent/checks", contentType: ContentType.JSON)
+        HttpResponseDecorator response = http.get(path: "/v1/agent/checks")
 
         response.getData().each {
             def id = it.key
 
-            http.put(path: "/v1/agent/check/deregister/$id", contentType: ContentType.ANY)
+            http.put(path: "/v1/agent/check/deregister/$id")
         }
     }
 }
