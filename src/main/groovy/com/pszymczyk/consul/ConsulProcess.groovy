@@ -1,7 +1,8 @@
 package com.pszymczyk.consul
 
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
-import com.pszymczyk.consul.infrastructure.SimpleConsulClient
+import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
+import groovy.transform.PackageScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -15,18 +16,20 @@ class ConsulProcess implements AutoCloseable {
     private final ConsulPorts consulPorts
     private final String address
     private final Process process
-    private final ConsulLogHandler consulLogHandler
     private final SimpleConsulClient simpleConsulClient
+    private final ConsulWaiter consulWaiter
+    private final ConsulLogHandler consulLogHandler
 
-    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process, ConsulLogHandler consulLogHandler) {
+    @PackageScope
+    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process, SimpleConsulClient simpleConsulClient, ConsulWaiter consulWaiter, ConsulLogHandler consulLogHandler) {
         this.dataDir = dataDir
         this.consulPorts = consulPorts
         this.address = address
         this.process = process
+        this.simpleConsulClient = simpleConsulClient
+        this.consulWaiter = consulWaiter
         this.consulLogHandler = consulLogHandler
-        this.simpleConsulClient = new SimpleConsulClient(address, httpPort)
-
-        addShutdownHook { this.process.destroyForcibly() }
+        addShutdownHook { this.process.destroyForcibly()}
     }
     /**
      * Deregister all services except consul.
@@ -45,7 +48,7 @@ class ConsulProcess implements AutoCloseable {
         process.destroy()
         consulLogHandler.close()
 
-        new ConsulWaiter(address, consulPorts.httpPort).awaitUntilConsulStopped() ?
+        consulWaiter.awaitUntilConsulStopped() ?
                 logger.info("Stopped Consul process") :
                 logger.warn("Can't stop Consul process running on port {}", consulPorts.httpPort)
     }

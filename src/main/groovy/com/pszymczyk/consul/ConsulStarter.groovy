@@ -4,6 +4,8 @@ import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
+import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
+import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -13,7 +15,7 @@ import java.nio.file.Path
 
 class ConsulStarter {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class)
     private static final Random random = new Random()
 
     private final Path dataDir
@@ -28,6 +30,8 @@ class ConsulStarter {
     private final String advertise
     private final String client
     private final String bind
+    private final String token
+    private final Integer waitTimeout
     private final ConsulLogHandler logHandler
 
     private boolean started = false
@@ -47,7 +51,9 @@ class ConsulStarter {
                   String startJoin,
                   String advertise,
                   String client,
-                  String bind) {
+                  String bind,
+                  String token,
+                  Integer waitTimeout) {
         this.logLevel = logLevel
         this.customLogger = customLogger
         this.configDir = configDir
@@ -60,6 +66,8 @@ class ConsulStarter {
         this.advertise = advertise
         this.client = client
         this.bind = bind
+        this.token = token
+        this.waitTimeout = waitTimeout
         makeDI()
 
         this.logHandler = new ConsulLogHandler(customLogger)
@@ -143,12 +151,12 @@ class ConsulStarter {
             .start()
 
         logHandler.handleStream(innerProcess.getInputStream())
-        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess, logHandler)
-
+        SimpleConsulClient consulClient = ConsulClientFactory.newClient(advertise, consulPorts.httpPort, Optional.ofNullable(token))
+        ConsulWaiter consulWaiter = new ConsulWaiter(advertise, consulPorts.httpPort, consulClient, Optional.ofNullable(waitTimeout))
+        ConsulProcess process = new ConsulProcess(dataDir, consulPorts, advertise, innerProcess, consulClient, consulWaiter, logHandler)
         logger.info("Starting Consul process on port {}", consulPorts.httpPort)
-        new ConsulWaiter(advertise, consulPorts.httpPort).awaitUntilConsulStarted()
+        consulWaiter.awaitUntilConsulStarted()
         logger.info("Consul process started")
-
         return process
     }
 

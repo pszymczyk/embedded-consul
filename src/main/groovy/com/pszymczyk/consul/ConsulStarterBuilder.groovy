@@ -21,6 +21,8 @@ class ConsulStarterBuilder {
     private String bind
     private String advertise = "127.0.0.1"
     private String client = "127.0.0.1"
+    private String token
+    private Integer waitTimeout
 
     private ConsulStarterBuilder() {
 
@@ -95,6 +97,17 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withToken(String token) {
+        this.token = token
+        this
+    }
+
+    ConsulStarterBuilder withWaitTimeout(int timeoutSeconds) {
+        this.waitTimeout = timeoutSeconds
+        this
+    }
+
+
     ConsulStarter build() {
         applyDefaults()
         return new ConsulStarter(dataDir,
@@ -108,7 +121,9 @@ class ConsulStarterBuilder {
                 startJoin,
                 advertise,
                 client,
-                bind)
+                bind,
+                token,
+                waitTimeout)
     }
 
     private void applyDefaults() {
@@ -123,10 +138,6 @@ class ConsulStarterBuilder {
 
         if (configDir == null) {
             configDir = Files.createTempDirectory("embedded-consul-config-dir")
-        }
-
-        if (consulPortsBuilder == null) {
-            this.consulPortsBuilder = ConsulPorts.create()
         }
     }
 }

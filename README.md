@@ -5,7 +5,7 @@ Embedded Consul provides easy way to run Consul (by HashiCorp) in integration te
 [![Build Status](https://travis-ci.org/pszymczyk/embedded-consul.svg?branch=master)](https://travis-ci.org/pszymczyk/embedded-consul)
 
 
-Built on Consul 1.1.0 <br />
+Built on Consul 1.4.2 <br />
 Compatible with jdk1.8+. <br />
 Working on all operating systems: Mac, Linux, Windows.
 
@@ -190,6 +190,12 @@ An environment variable can be set to change the consul CDN:
 # default
 export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
 ```
+Proxy can be used if necessary.
+```
+https.proxyHost=localhost 
+https.proxyPort=3128
+```
+
 
 ### Files structure
 
@@ -244,4 +250,4 @@ Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/b
 ### JDK 1.7.x support
 
 Support for older Java versions has been dropped throughout release `2.0.0`. 
-If you'd like to use `embedded-consul` with JDK 1.7 the `1.1.1` would be the last  appropriate version.
+If you'd like to use `embedded-consul` with JDK 1.7 the `1.1.1` is the last  appropriate version.
