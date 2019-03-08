@@ -1,11 +1,10 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.ConsulWaiter
-import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
 import com.pszymczyk.consul.infrastructure.OsResolver
 import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
 import com.pszymczyk.consul.infrastructure.client.SimpleConsulClient
+import com.pszymczyk.consul.starter.ConsulDownloader
 import groovy.transform.PackageScope
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.slf4j.Logger
@@ -22,7 +21,6 @@ class ConsulStarter {
     private final Path downloadDir
     private final Path configDir
     private final CustomConfig customConfig
-    private final String consulVersion
     private final LogLevel logLevel
     private final Logger customLogger
     private final ConsulPorts consulPorts
@@ -33,17 +31,14 @@ class ConsulStarter {
     private final String token
     private final Integer waitTimeout
     private final ConsulLogHandler logHandler
+    private final ConsulDownloader consulDownloader
 
     private boolean started = false
-
-    private HttpBinaryRepository binaryRepository
-    private AntUnzip unzip
 
     @PackageScope
     ConsulStarter(Path dataDir,
                   Path downloadDir,
                   Path configDir,
-                  String consulVersion,
                   CustomConfig customConfig,
                   LogLevel logLevel,
                   Logger customLogger,
@@ -53,14 +48,14 @@ class ConsulStarter {
                   String client,
                   String bind,
                   String token,
-                  Integer waitTimeout) {
+                  Integer waitTimeout,
+                  ConsulDownloader consulDownloader) {
         this.logLevel = logLevel
         this.customLogger = customLogger
         this.configDir = configDir
         this.customConfig = customConfig
         this.dataDir = dataDir
         this.downloadDir = downloadDir
-        this.consulVersion = consulVersion
         this.consulPorts = mergePorts(ports)
         this.startJoin = startJoin
         this.advertise = advertise
@@ -68,9 +63,9 @@ class ConsulStarter {
         this.bind = bind
         this.token = token
         this.waitTimeout = waitTimeout
-        makeDI()
 
         this.logHandler = new ConsulLogHandler(customLogger)
+        this.consulDownloader = consulDownloader
     }
 
     private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {
@@ -89,20 +84,13 @@ class ConsulStarter {
         ports.build()
     }
 
-    private void makeDI() {
-        binaryRepository = new HttpBinaryRepository()
-        unzip = new AntUnzip()
-    }
-
     ConsulProcess start() {
         logger.info("Starting new Consul process.")
         checkInitialState()
 
         started = true
 
-        if (!isBinaryDownloaded()) {
-            downloadAndUnpackBinary()
-        }
+        consulDownloader.downloadConsul()
 
         createBasicConfigFile(consulPorts)
         if (!customConfig.isEmpty()) {
@@ -160,6 +148,7 @@ class ConsulStarter {
         return process
     }
 
+
     private void checkInitialState() {
         if (started) {
             throw new EmbeddedConsulException('This Consul Starter instance already started Consul process. Create new ConsulStarter instance')
@@ -173,15 +162,6 @@ class ConsulStarter {
         }
     }
 
-    private void downloadAndUnpackBinary() {
-        File file = new File(downloadDir.toAbsolutePath().toString(), 'consul.zip')
-        logger.info("Downloading archives into: {}", file.toString())
-
-        File archive = binaryRepository.getConsulBinaryArchive(consulVersion, file)
-
-        logger.info("Unzipping binaries into: {}", downloadDir.toString())
-        unzip.unzip(archive, downloadDir.toFile())
-    }
 
     private void createBasicConfigFile(ConsulPorts consulPorts) {
         File portsConfigFile = new File(configDir.toFile(), "basic_config.json")
@@ -209,15 +189,6 @@ class ConsulStarter {
         customConfigFile.text = customConfig.asString()
     }
 
-    private boolean isBinaryDownloaded() {
-        return getConsulBinary().exists()
-    }
-
-    File getConsulBinary() {
-        String consulBinaryName = OsResolver.resolve().equals("windows") ? "consul.exe" : "consul"
-        return new File(downloadDir.toString(), consulBinaryName)
-    }
-
     private static String randomNodeId() {
         return randomHex(8) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(4) + "-" + randomHex(12);
     }
@@ -232,5 +203,9 @@ class ConsulStarter {
             sb.append(Long.toHexString(random.nextInt(16)));
         }
         return sb.toString();
+    }
+
+    File getConsulBinary() {
+        return consulDownloader.getConsulBinary()
     }
 }
