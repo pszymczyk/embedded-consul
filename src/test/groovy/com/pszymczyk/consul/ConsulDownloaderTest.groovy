@@ -1,4 +1,4 @@
-package com.pszymczyk.consul.starter
+package com.pszymczyk.consul
 
 import com.pszymczyk.consul.ConsulStarter
 import com.pszymczyk.consul.ConsulStarterBuilder

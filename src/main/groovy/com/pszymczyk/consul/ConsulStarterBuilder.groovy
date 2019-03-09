@@ -1,6 +1,6 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.starter.ConsulDownloader
+
 import org.slf4j.Logger
 
 import java.nio.file.Files
@@ -111,23 +111,23 @@ class ConsulStarterBuilder {
 
     ConsulStarter build() {
         applyDefaults()
-
         ConsulDownloader consulDownloader = new ConsulDownloader(downloadDir, consulVersion)
+
+        ConsulProcessCommandFactory consulProcessCommandFactory =
+                new ConsulProcessCommandFactory(dataDir, configDir, advertise, client, logLevel, bind, startJoin, customConfig)
 
         return new ConsulStarter(dataDir,
                 downloadDir,
                 configDir,
                 customConfig,
-                logLevel,
                 customLogger,
                 consulPortsBuilder,
-                startJoin,
                 advertise,
-                client,
                 bind,
                 token,
                 waitTimeout,
-                consulDownloader)
+                consulDownloader,
+                consulProcessCommandFactory)
     }
 
     private void applyDefaults() {

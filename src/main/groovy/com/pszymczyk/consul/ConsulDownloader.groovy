@@ -1,4 +1,4 @@
-package com.pszymczyk.consul.starter
+package com.pszymczyk.consul
 
 import com.pszymczyk.consul.infrastructure.AntUnzip
 import com.pszymczyk.consul.infrastructure.HttpBinaryRepository
