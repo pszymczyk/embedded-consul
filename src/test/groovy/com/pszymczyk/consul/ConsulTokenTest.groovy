@@ -7,7 +7,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static com.pszymczyk.consul.ConsulStarterBuilder.consulStarter
+import static ConsulStarterBuilder.consulStarter
 import static java.nio.charset.Charset.defaultCharset
 
 class ConsulTokenTest extends Specification {
