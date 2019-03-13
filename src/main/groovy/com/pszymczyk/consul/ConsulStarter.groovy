@@ -57,7 +57,7 @@ class ConsulStarter {
         logHandler.handleStream(innerProcess.getInputStream())
         SimpleConsulClient consulClient = ConsulClientFactory.newClient(userInput.advertise, userInput.consulPorts.httpPort, Optional.ofNullable(userInput.token))
         ConsulWaiter consulWaiter = new ConsulWaiter(userInput.advertise, userInput.consulPorts.httpPort, consulClient, Optional.ofNullable(userInput.waitTimeout))
-        ConsulProcess process = new ConsulProcess(userInput.dataDir, userInput.consulPorts, userInput.advertise, innerProcess, consulClient, consulWaiter)
+        ConsulProcess process = new ConsulProcess(userInput.dataDir, userInput.consulPorts, userInput.advertise, innerProcess, consulClient, consulWaiter, logHandler)
 
         logger.info("Starting Consul process on port {}", userInput.consulPorts.httpPort)
         consulWaiter.awaitUntilConsulStarted()
