@@ -11,9 +11,14 @@ buildscript {
     }
 }
 
-apply plugin: 'pl.allegro.tech.build.axion-release'
-apply plugin: 'groovy'
-apply from: 'publish.gradle'
+
+plugins {
+    id 'groovy'
+    id 'pl.allegro.tech.build.axion-release' version '1.10.0'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
 
 scmVersion {
     tag {
@@ -52,5 +57,69 @@ task wrapper(type: Wrapper) {
 test {
     testLogging {
         exceptionFormat 'full'
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'Embedded Consul'
+                description = 'Embedded Consul provides easy way to run Consul in integration tests.'
+                url = 'https://github.com/pszymczyk/embedded-consul'
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'pszymczyk'
+                        name = 'Pawel Szymczyk'
+                        email = 'pawel@pszymczyk.com'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/pszymczyk/embedded-consul'
+                    connection = 'git@github.com:pszymczyk/embedded-consul.git'
+                    developerConnection = 'git@github.com:pszymczyk/embedded-consul.git'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username project.findProperty('nexusUsername') ?: 'secured'
+                password project.findProperty('nexusPassword') ?: 'secured'
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
