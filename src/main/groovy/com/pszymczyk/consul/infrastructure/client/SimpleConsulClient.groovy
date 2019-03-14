@@ -28,7 +28,15 @@ class SimpleConsulClient {
         response.getData()
     }
 
-    Collection<String> getServicesIds() {
+    void reset() {
+        this.getServicesIds().each { it -> this.deregister(it) }
+        this.clearKvStore()
+        this.destroyActiveSessions()
+        this.deregisterAllChecks()
+
+    }
+
+    private Collection<String> getServicesIds() {
         HttpResponseDecorator response = http.get(path: '/v1/agent/services')
 
         response.getData()
@@ -36,15 +44,15 @@ class SimpleConsulClient {
                 .findAll({ it -> it != 'consul' })
     }
 
-    void deregister(String id) {
+    private void deregister(String id) {
         http.put(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
     }
 
-    void clearKvStore() {
+    private void clearKvStore() {
         http.delete(path: "/v1/kv/", query: [recurse: true], contentType: ContentType.ANY)
     }
 
-    void destroyActiveSessions() {
+    private void destroyActiveSessions() {
         HttpResponseDecorator response = http.get(path: "/v1/session/list")
 
         response.getData().each {
@@ -53,7 +61,7 @@ class SimpleConsulClient {
         }
     }
 
-    void deregisterAllChecks() {
+    private void deregisterAllChecks() {
         HttpResponseDecorator response = http.get(path: "/v1/agent/checks")
 
         response.getData().each {
