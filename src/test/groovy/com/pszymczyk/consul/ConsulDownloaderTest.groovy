@@ -1,12 +1,16 @@
 package com.pszymczyk.consul
 
-import com.pszymczyk.consul.ConsulStarter
-import com.pszymczyk.consul.ConsulStarterBuilder
 import spock.lang.Specification
 
 class ConsulDownloaderTest extends Specification {
-    private final ConsulStarter starter = ConsulStarterBuilder.consulStarter().build()
 
+    def osName = System.getProperty("os.name")
+
+    def cleanup() {
+        System.setProperty("os.name", osName)
+    }
+
+    private final ConsulStarter starter = ConsulStarterBuilder.consulStarter().build()
 
     def "should provide proper consul binary for windows"() {
         given:
