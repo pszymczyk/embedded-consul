@@ -61,13 +61,13 @@ test {
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
+    from sourceSets.main.groovy
     classifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
-    from javadoc
-    classifier = 'javadoc'
+    from groovydoc
+    classifier = 'groovydoc'
 }
 
 publishing {
@@ -116,10 +116,4 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
-}
-
-javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
 }
