@@ -18,7 +18,7 @@ class ConsulStarter {
     private ConsulStarterState consulStarterState
     private BinariesManager binariesManager
     private ConfigFilesFactory configFilesFactory
-    private StartCommandFactory startCommandFactory
+    private ConsulProcessCommandFactory consulProcessCommandFactory
     private InnerProcessFactory innerProcessFactory
 
     @PackageScope
@@ -32,7 +32,7 @@ class ConsulStarter {
         consulStarterState = new ConsulStarterState(userInput.bind, userInput.consulPorts.httpPort)
         binariesManager = new BinariesManager(userInput.downloadDir, userInput.consulVersion)
         configFilesFactory = new ConfigFilesFactory(userInput.consulPorts, userInput.customConfig, userInput.configDir)
-        startCommandFactory = new StartCommandFactory(
+        consulProcessCommandFactory = new ConsulProcessCommandFactory(
                 binariesManager.binaryPath,
                 userInput.dataDir,
                 userInput.configDir,

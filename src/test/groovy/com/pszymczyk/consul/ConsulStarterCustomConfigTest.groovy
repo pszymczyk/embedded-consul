@@ -21,7 +21,7 @@ class ConsulStarterCustomConfigTest extends Specification {
         Path tempDir = Files.createTempDirectory("for_test_extra_config")
 
         when:
-        ConsulStarter starter = ConsulStarterBuilder.consulStarter()
+            ConsulStarter starter = ConsulStarterBuilder.consulStarter()
             .withConfigDir(tempDir)
             .withCustomConfig(conf)
             .build()

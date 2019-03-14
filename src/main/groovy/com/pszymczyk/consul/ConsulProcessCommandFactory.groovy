@@ -5,7 +5,7 @@ import groovy.transform.PackageScope
 import java.nio.file.Path
 
 @PackageScope
-class StartCommandFactory {
+class ConsulProcessCommandFactory {
 
     private static final Random random = new Random()
 
@@ -20,7 +20,7 @@ class StartCommandFactory {
     private final String startJoin
     private final CustomConfig customConfig
 
-    StartCommandFactory(String binaryPath,
+    ConsulProcessCommandFactory(String binaryPath,
                         Path dataDir,
                         Path configDir,
                         String advertise,
