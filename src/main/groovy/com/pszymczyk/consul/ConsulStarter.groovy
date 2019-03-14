@@ -13,8 +13,8 @@ class ConsulStarter {
     private static final Logger logger = LoggerFactory.getLogger(ConsulStarter.class)
 
     private final UserInput userInput
-    private final ConsulLogHandler logHandler
 
+    private ConsulLogHandler logHandler
     private ConsulStarterState consulStarterState
     private BinariesManager binariesManager
     private ConfigFilesFactory configFilesFactory
@@ -24,11 +24,11 @@ class ConsulStarter {
     @PackageScope
     ConsulStarter(UserInput userInput) {
         this.userInput = userInput
-        this.logHandler = new ConsulLogHandler(userInput.customLogger)
         makeDI()
     }
 
     private void makeDI() {
+        logHandler = new ConsulLogHandler(userInput.customLogger)
         consulStarterState = new ConsulStarterState(userInput.bind, userInput.consulPorts.httpPort)
         binariesManager = new BinariesManager(userInput.downloadDir, userInput.consulVersion)
         configFilesFactory = new ConfigFilesFactory(userInput.consulPorts, userInput.customConfig, userInput.configDir)
