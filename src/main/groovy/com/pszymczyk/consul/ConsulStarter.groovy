@@ -52,7 +52,7 @@ class ConsulStarter {
         consulStarterState.start()
         binariesManager.ensureConsulBinaries()
         configFilesFactory.createConfigFiles()
-        String[] command = startCommandFactory.create()
+        String[] command = consulProcessCommandFactory.create()
         Process innerProcess = innerProcessFactory.create(command)
         logHandler.handleStream(innerProcess.getInputStream())
         SimpleConsulClient consulClient = ConsulClientFactory.newClient(userInput.advertise, userInput.consulPorts.httpPort, Optional.ofNullable(userInput.token))
