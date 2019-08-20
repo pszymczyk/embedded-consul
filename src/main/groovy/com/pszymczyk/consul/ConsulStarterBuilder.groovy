@@ -1,11 +1,13 @@
 package com.pszymczyk.consul
 
-
 import org.slf4j.Logger
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+
+import static com.pszymczyk.consul.infrastructure.StringUtils.requireNotBlank
+import static java.util.Objects.requireNonNull
 
 
 class ConsulStarterBuilder {
@@ -34,37 +36,37 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withLogLevel(LogLevel logLevel) {
-        this.logLevel = logLevel
+        this.logLevel = requireNonNull(logLevel, "Given log level cannot be null.")
         this
     }
 
     ConsulStarterBuilder withLogger(Logger customLogger) {
-        this.customLogger = customLogger
+        this.customLogger = requireNonNull(customLogger, "Given logger cannot be null.")
         this
     }
 
     ConsulStarterBuilder withDataDirectory(Path dataDir) {
-        this.dataDir = dataDir
+        this.dataDir = requireNonNull(dataDir, "Given data directory cannot be null.")
         this
     }
 
     ConsulStarterBuilder withConsulBinaryDownloadDirectory(Path downloadDir) {
-        this.downloadDir = downloadDir
+        this.downloadDir = requireNonNull(downloadDir, "Given download directory cannot be null.")
         this
     }
 
     ConsulStarterBuilder withConsulVersion(String consulVersion) {
-        this.consulVersion = consulVersion
+        this.consulVersion = requireNotBlank(consulVersion, "Given Consul version cannot be null or blank.")
         this
     }
 
     ConsulStarterBuilder withConfigDir(Path configDir) {
-        this.configDir = configDir
+        this.configDir = requireNonNull(configDir, "Given configuration directory cannot be null.")
         this
     }
 
     ConsulStarterBuilder withCustomConfig(String customConfig) {
-        this.customConfig = new CustomConfig(customConfig)
+        this.customConfig = new CustomConfig(requireNotBlank(customConfig, "Given custom configuration cannot bu null or blank."))
         this
     }
 
@@ -74,32 +76,33 @@ class ConsulStarterBuilder {
     }
 
     ConsulStarterBuilder withConsulPorts(ConsulPorts consulPorts) {
-        this.consulPortsBuilder.fromConsulPorts(consulPorts)
+        this.consulPortsBuilder.fromConsulPorts(requireNonNull(consulPorts, "Given Consul ports cannot be null."))
         this
     }
 
     ConsulStarterBuilder withAttachedTo(ConsulProcess otherProcess) {
-        this.startJoin = otherProcess == null ? null : "${otherProcess.address}:${otherProcess.serfLanPort}"
+        requireNonNull(otherProcess, "Given process to join cannot be null.")
+        this.startJoin = "${otherProcess.address}:${otherProcess.serfLanPort}"
         this
     }
 
     ConsulStarterBuilder withAdvertise(String advertise) {
-        this.advertise = advertise
+        this.advertise = requireNotBlank(advertise, "Given advertise address cannot be null or blank.")
         this
     }
 
     ConsulStarterBuilder withClient(String client) {
-        this.client = client
+        this.client = requireNotBlank(client, "Given client cannot be null or blank.")
         this
     }
 
     ConsulStarterBuilder withBind(String bind) {
-        this.bind = bind
+        this.bind = requireNotBlank(bind, "Given bind address cannot be null or blank.")
         this
     }
 
     ConsulStarterBuilder withToken(String token) {
-        this.token = token
+        this.token = requireNotBlank(token, "Given token cannot be null or blank")
         this
     }
 
@@ -111,23 +114,20 @@ class ConsulStarterBuilder {
 
     ConsulStarter build() {
         applyDefaults()
-        ConsulDownloader consulDownloader = new ConsulDownloader(downloadDir, consulVersion)
-
-        ConsulProcessCommandFactory consulProcessCommandFactory =
-                new ConsulProcessCommandFactory(dataDir, configDir, advertise, client, logLevel, bind, startJoin, customConfig)
-
-        return new ConsulStarter(dataDir,
+        return new ConsulStarter(new UserInput(dataDir,
                 downloadDir,
                 configDir,
+                consulVersion,
                 customConfig,
+                logLevel,
                 customLogger,
                 consulPortsBuilder,
+                startJoin,
                 advertise,
+                client,
                 bind,
                 token,
-                waitTimeout,
-                consulDownloader,
-                consulProcessCommandFactory)
+                waitTimeout))
     }
 
     private void applyDefaults() {

@@ -10,7 +10,6 @@ class HttpBinaryRepository {
         this.httpsProtocolsSetter = new HttpsProtocolsSetter(new HttpsProtocolsSetter.SystemPropertiesStorage())
     }
 
-
     File getConsulBinaryArchive(String version, File file) {
         httpsProtocolsSetter.setRequiredTls(System.getProperty("java.version"), System.getProperty("https.protocols"))
         String os = OsResolver.resolve()

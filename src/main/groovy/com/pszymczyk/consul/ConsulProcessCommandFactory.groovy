@@ -1,33 +1,49 @@
 package com.pszymczyk.consul
 
+import groovy.transform.PackageScope
 
 import java.nio.file.Path
 
+@PackageScope
 class ConsulProcessCommandFactory {
+
     private static final Random random = new Random()
 
+    private final String binaryPath
     private final Path dataDir
     private final Path configDir
     private final String advertise
     private final String client
     private final LogLevel logLevel
+    private final ConsulPorts consulPorts
     private final String bind
     private final String startJoin
     private final CustomConfig customConfig
 
-    ConsulProcessCommandFactory(Path dataDir, Path configDir, String advertise, String client, LogLevel logLevel, String bind, String startJoin, CustomConfig customConfig) {
+    ConsulProcessCommandFactory(String binaryPath,
+                        Path dataDir,
+                        Path configDir,
+                        String advertise,
+                        String client,
+                        LogLevel logLevel,
+                        ConsulPorts consulPorts,
+                        String bind,
+                        String startJoin,
+                        CustomConfig customConfig) {
+        this.binaryPath = binaryPath
         this.dataDir = dataDir
         this.configDir = configDir
         this.advertise = advertise
         this.client = client
         this.logLevel = logLevel
+        this.consulPorts = consulPorts
         this.bind = bind
         this.startJoin = startJoin
         this.customConfig = customConfig
     }
 
-    String[] createConsulProcessCommand(String pathToConsul, ports) {
-        String[] command = [pathToConsul,
+    String[] create() {
+        String[] command = [binaryPath,
                             "agent",
                             "-data-dir=$dataDir",
                             "-dev",
@@ -35,8 +51,8 @@ class ConsulProcessCommandFactory {
                             "-advertise=$advertise",
                             "-client=$client",
                             "-log-level=$logLevel.value",
-                            "-http-port=${ports.httpPort}",
-                            "-grpc-port=${ports.grpcPort}"]
+                            "-http-port=${consulPorts.httpPort}",
+                            "-grpc-port=${consulPorts.grpcPort}"]
 
         if (bind != null) {
             command += "-bind=$bind"
@@ -53,7 +69,8 @@ class ConsulProcessCommandFactory {
         if (customConfig.get("node_name") == null) {
             command += ["-node=" + randomNodeName()]
         }
-        command
+
+        return command
     }
 
     private static String randomNodeId() {
@@ -67,8 +84,8 @@ class ConsulProcessCommandFactory {
     private static String randomHex(int len) {
         StringBuilder sb = new StringBuilder()
         for (int i = 0; i < len; i++) {
-            sb.append(Long.toHexString(random.nextInt(16)));
+            sb.append(Long.toHexString(random.nextInt(16)))
         }
-        return sb.toString();
+        return sb.toString()
     }
 }
