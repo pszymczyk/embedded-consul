@@ -67,7 +67,7 @@ task sourcesJar(type: Jar) {
 
 task javadocJar(type: Jar) {
     from groovydoc
-    classifier = 'groovydoc'
+    classifier = 'javadoc'
 }
 
 publishing {
