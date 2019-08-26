@@ -36,10 +36,7 @@ class ConsulProcess implements AutoCloseable {
      * Deregister all services except consul.
      */
     void reset() {
-        simpleConsulClient.getServicesIds().each { it -> simpleConsulClient.deregister(it) }
-        simpleConsulClient.clearKvStore()
-        simpleConsulClient.destroyActiveSessions()
-        simpleConsulClient.deregisterAllChecks()
+        simpleConsulClient.reset()
     }
 
     @Override
