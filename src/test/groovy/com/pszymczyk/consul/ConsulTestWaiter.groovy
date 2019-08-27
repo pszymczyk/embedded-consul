@@ -22,7 +22,7 @@ class ConsulTestWaiter extends ConsulWaiter {
 
     void awaitUntilServiceRegistered(String id) {
         await().atMost(30, TimeUnit.SECONDS).until({
-            consulClient.getAgentServices().getValue().values().findAll({ id == it.id }).size() == 1
+            assert consulClient.getAgentServices().getValue().values().findAll({ id == it.id }).size() == 1
         })
     }
 
@@ -30,7 +30,7 @@ class ConsulTestWaiter extends ConsulWaiter {
         await().atMost(30, TimeUnit.SECONDS).until({
             def builder = CatalogServicesRequest.newBuilder().setQueryParams(QueryParams.DEFAULT)
             token.ifPresent({ builder.setToken(it) })
-            consulClient.getCatalogServices(builder.build()).getValue().keySet().contains("consul")
+            assert consulClient.getCatalogServices(builder.build()).getValue().keySet().contains("consul")
         })
     }
 }

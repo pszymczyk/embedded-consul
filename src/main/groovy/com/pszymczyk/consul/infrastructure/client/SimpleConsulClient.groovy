@@ -36,6 +36,12 @@ class SimpleConsulClient {
                 .findAll({ it -> it != 'consul' })
     }
 
+    void register(String name) {
+        http.put(path: "/v1/agent/service/register",
+                contentType: ContentType.JSON,
+                body: ["Name": name])
+    }
+
     void deregister(String id) {
         http.put(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
     }
@@ -49,7 +55,7 @@ class SimpleConsulClient {
 
         response.getData().each {
             def id = it.ID
-            http.put(path: "/v1/session/destroy/$id", contentType:  ContentType.ANY)
+            http.put(path: "/v1/session/destroy/$id", contentType: ContentType.ANY)
         }
     }
 

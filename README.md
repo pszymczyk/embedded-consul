@@ -34,7 +34,7 @@ public class SpringBootIntegrationTest {
 
     @BeforeClass
     public static void setup() {
-        consul = ConsulStarterBuilder.consulStarter().build().start();
+        consul = ConsulStarterBuilder.consulStarter().buildAndStart();
 
         System.setProperty("spring.cloud.consul.enabled", "true");
         System.setProperty("spring.cloud.consul.host", "localhost");
@@ -130,7 +130,7 @@ public class IntegrationTest {
 
     @Before
     public void setup() {
-        consul = ConsulStarterBuilder.consulStarter().build().start();
+        consul = ConsulStarterBuilder.consulStarter().buildAndStart();
     }
 
     @After
@@ -175,7 +175,7 @@ String customConfiguration =
                     "\"node_name\": \"foobar\"" +
                 "}";
 
-ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
+ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).buildAndStart();    
 
 ```
 

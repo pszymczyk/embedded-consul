@@ -10,6 +10,9 @@ import spock.lang.Specification
 
 class ConsulStarterTest extends Specification {
 
+    static TEST_SERVICE = "test_service"
+    static ANOTHER_TEST_SERVICE = "another_test_service"
+
     @Shared
     ConsulProcess consul
     @Shared
@@ -24,7 +27,10 @@ class ConsulStarterTest extends Specification {
             "dns": 12121
           }
         }"""
-        consul = ConsulStarterBuilder.consulStarter().withCustomConfig(conf).build().start()
+        consul = ConsulStarterBuilder.consulStarter()
+                .withCustomConfig(conf)
+                .withService(TEST_SERVICE, ANOTHER_TEST_SERVICE)
+                .buildAndStart()
         consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
         consulClient = new ConsulClient('localhost', consul.httpPort)
     }
@@ -37,9 +43,15 @@ class ConsulStarterTest extends Specification {
         !consulClient.getCatalogNodes(QueryParams.DEFAULT).getValue().isEmpty()
     }
 
+    def "should register service"() {
+        expect:
+        consulWaiter.awaitUntilServiceRegistered(TEST_SERVICE)
+        consulWaiter.awaitUntilServiceRegistered(ANOTHER_TEST_SERVICE)
+    }
+
     def "should throw exception when try to run Consul on busy port"() {
         when:
-        ConsulStarterBuilder.consulStarter().withHttpPort(consul.httpPort).build().start()
+        ConsulStarterBuilder.consulStarter().withHttpPort(consul.httpPort).buildAndStart()
 
         then:
         def ex = thrown EmbeddedConsulException

@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull
 
 class ConsulStarterBuilder {
 
+    private final Set<String> services = new LinkedHashSet<>()
+
     private Path dataDir
     private Path downloadDir
     private Path configDir
@@ -111,6 +113,14 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder withService(String... serviceName) {
+        this.services.addAll(serviceName)
+        this
+    }
+
+    ConsulProcess buildAndStart() {
+        build().start()
+    }
 
     ConsulStarter build() {
         applyDefaults()
@@ -127,7 +137,8 @@ class ConsulStarterBuilder {
                 client,
                 bind,
                 token,
-                waitTimeout))
+                waitTimeout,
+                services))
     }
 
     private void applyDefaults() {

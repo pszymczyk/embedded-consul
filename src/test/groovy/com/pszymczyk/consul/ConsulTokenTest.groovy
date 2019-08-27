@@ -51,7 +51,7 @@ class ConsulTokenTest extends Specification {
         when:
         consul = consulStarter()
                 .withToken(token)
-                .build().start()
+                .buildAndStart()
 
         ConsulTestWaiter consulWaiter = new ConsulTestWaiter('localhost', consul.httpPort)
 
@@ -95,7 +95,7 @@ class ConsulTokenTest extends Specification {
         consul = consulStarter()
                 .withToken(token)
                 .withCustomConfig(aclConfiguration(token))
-                .build().start()
+                .buildAndStart()
 
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
 
@@ -108,7 +108,7 @@ class ConsulTokenTest extends Specification {
 
     def "client with token should be able to call unsecured Consul"() {
         given:
-        consul = consulStarter().withToken(token).build().start()
+        consul = consulStarter().withToken(token).buildAndStart()
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
 
         when:
@@ -121,7 +121,7 @@ class ConsulTokenTest extends Specification {
 
     def "client should be able to call unsecured consul with token"() {
         given:
-        consul = consulStarter().build().start()
+        consul = consulStarter().buildAndStart()
         ConsulClient consulClient = new ConsulClient("localhost", consul.httpPort)
 
         when:

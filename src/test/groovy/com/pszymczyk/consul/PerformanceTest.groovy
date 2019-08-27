@@ -12,7 +12,7 @@ class PerformanceTest extends Specification {
 
         when:
         (1..10).each {
-            ConsulStarterBuilder.consulStarter().build().start()
+            ConsulStarterBuilder.consulStarter().buildAndStart()
         }
 
         then:
