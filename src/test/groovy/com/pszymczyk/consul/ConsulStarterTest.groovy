@@ -10,8 +10,8 @@ import spock.lang.Specification
 
 class ConsulStarterTest extends Specification {
 
-    static TEST_SERVICE = "test_service"
-    static ANOTHER_TEST_SERVICE = "another_test_service"
+    static TEST_SERVICE = new Service("test_service", "127.0.0.1", 8000)
+    static ANOTHER_TEST_SERVICE = new Service("another_test_service", "127.0.0.1", 8000)
 
     @Shared
     ConsulProcess consul
@@ -44,9 +44,20 @@ class ConsulStarterTest extends Specification {
     }
 
     def "should register service"() {
-        expect:
-        consulWaiter.awaitUntilServiceRegistered(TEST_SERVICE)
-        consulWaiter.awaitUntilServiceRegistered(ANOTHER_TEST_SERVICE)
+        given:
+        consulWaiter.awaitUntilServiceRegistered(TEST_SERVICE.name)
+        consulWaiter.awaitUntilServiceRegistered(ANOTHER_TEST_SERVICE.name)
+
+        when:
+        def services = consulClient.agentServices.value
+
+        then:
+        services[TEST_SERVICE.name].address == TEST_SERVICE.address
+        services[TEST_SERVICE.name].port == TEST_SERVICE.port
+
+        and:
+        services[ANOTHER_TEST_SERVICE.name].address == ANOTHER_TEST_SERVICE.address
+        services[ANOTHER_TEST_SERVICE.name].port == ANOTHER_TEST_SERVICE.port
     }
 
     def "should throw exception when try to run Consul on busy port"() {

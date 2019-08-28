@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull
 
 class ConsulStarterBuilder {
 
-    private final Set<String> services = new LinkedHashSet<>()
+    private final Set<Service> services = new LinkedHashSet<>()
 
     private Path dataDir
     private Path downloadDir
@@ -113,7 +113,7 @@ class ConsulStarterBuilder {
         this
     }
 
-    ConsulStarterBuilder withService(String... serviceName) {
+    ConsulStarterBuilder withService(Service... serviceName) {
         this.services.addAll(serviceName)
         this
     }
