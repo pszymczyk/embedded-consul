@@ -141,9 +141,9 @@ public class IntegrationTest {
     /* tests as in example above */
 ```
 
-### Register Service
+### Register Services
 
-You can automatically register services in Consul via `ConsulStarterBuilder`:
+You can automatically register Services in Consul via `ConsulStarterBuilder`:
 ```java
     
     ConsulStarterBuilder.consulStarter()
