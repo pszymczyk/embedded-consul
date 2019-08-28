@@ -149,7 +149,7 @@ You can automatically register Services in Consul via `ConsulStarterBuilder`:
     ConsulStarterBuilder.consulStarter()
         .withService(
                 new Service("a service"), 
-                new Service("another service"), "127.0.0.1", 8000)
+                new Service("another service", "127.0.0.1", 8000)
         .buildAndStart();
 
 ``` 
