@@ -7,11 +7,11 @@ class ConsulStarterNodeNameIdTest extends Specification {
 
     def "should generate random name by default"() {
         when:
-        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().buildAndStart()
         String name1 = new ConsulClient("localhost", consul1.httpPort)
                 .agentSelf.value.config.nodeName
 
-        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().buildAndStart()
         String name2 = new ConsulClient("localhost", consul2.httpPort)
                 .agentSelf.value.config.nodeName
 
@@ -28,7 +28,7 @@ class ConsulStarterNodeNameIdTest extends Specification {
         when:
         ConsulProcess consul = ConsulStarterBuilder.consulStarter()
                 .withCustomConfig("{\"node_name\":\"custom_node_name\"}")
-                .build().start()
+                .buildAndStart()
         String name = new ConsulClient("localhost", consul.httpPort)
                 .agentSelf.value.config.nodeName
 

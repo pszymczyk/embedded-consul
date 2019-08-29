@@ -11,7 +11,7 @@ Working on all operating systems: Mac, Linux, Windows.
 
 ### How to get it?
 
-``` xml
+```xml
     <dependency>
       <groupId>com.pszymczyk.consul</groupId>
       <artifactId>embedded-consul</artifactId>
@@ -20,21 +20,21 @@ Working on all operating systems: Mac, Linux, Windows.
     </dependency>
 ```
 
-``` groovy
+```groovy
     testCompile 'com.pszymczyk.consul:embedded-consul:2.1.4'
 ```
 
 ### Usage
 #### Spring Boot setup
 
-``` java
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SpringBootIntegrationTest {
 
     @BeforeClass
     public static void setup() {
-        consul = ConsulStarterBuilder.consulStarter().build().start();
+        consul = ConsulStarterBuilder.consulStarter().buildAndStart();
 
         System.setProperty("spring.cloud.consul.enabled", "true");
         System.setProperty("spring.cloud.consul.host", "localhost");
@@ -53,7 +53,7 @@ public class SpringBootIntegrationTest {
 If JUnit is on classpath, simplest way to use `embedded-consul` is via
 [JUnit rules](https://github.com/junit-team/junit4/wiki/Rules).
 
-``` java
+```java
 public class IntegrationTest {
 
     @ClassRule
@@ -80,7 +80,7 @@ There is also an [extension](https://junit.org/junit5/docs/current/user-guide/#e
 Unlike in Junit 4 with `@Rule` and `@ClassRule` there is no option to control the scope of `ConsulProcess`.
 `ConsulExtension` starts Consul for a whole class just like `@ClassRule`, but it resets the Consul state between tests.
 
-``` java
+```java
 class IntegrationTest {
 
     @RegisterExtension
@@ -103,7 +103,7 @@ class IntegrationTest {
 
 The extension can also be registered via `@ExtendWith` annotation and provided to test as a method argument
 
-``` java
+```java
 @ExtendWith(ConsulExtension.class)
 class IntegrationTest {
 
@@ -122,7 +122,7 @@ class IntegrationTest {
 ```
 
 #### Manual
-``` java
+```java
 
 public class IntegrationTest {
 
@@ -130,7 +130,7 @@ public class IntegrationTest {
 
     @Before
     public void setup() {
-        consul = ConsulStarterBuilder.consulStarter().build().start();
+        consul = ConsulStarterBuilder.consulStarter().buildAndStart();
     }
 
     @After
@@ -140,6 +140,19 @@ public class IntegrationTest {
 
     /* tests as in example above */
 ```
+
+### Register Services
+
+You can automatically register Services in Consul via `ConsulStarterBuilder`:
+```java
+    
+    ConsulStarterBuilder.consulStarter()
+        .withService(
+                new Service("a service"), 
+                new Service("another service", "127.0.0.1", 8000));
+        .buildAndStart();
+
+``` 
 
 ### Reset Consul state
 
@@ -175,14 +188,14 @@ String customConfiguration =
                     "\"node_name\": \"foobar\"" +
                 "}";
 
-ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).build().start();    
+ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(customConfiguration).buildAndStart();    
 
 ```
 
 Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base
 configuration (with highest priority).
 
-### Changing where to download Consul
+### Changing download directory
 
 An environment variable can be set to change the consul CDN:
 

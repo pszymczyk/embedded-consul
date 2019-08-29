@@ -4,15 +4,17 @@ import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
 import com.ecwid.consul.v1.agent.model.NewService
 import com.jayway.awaitility.groovy.AwaitilityTrait
+import spock.lang.Requires
 import spock.lang.Specification
 
+@Requires({ os.linux })
 class MultipleProcessesTest extends Specification implements AwaitilityTrait {
 
     def "should run multiple Consul processes simultaneously"() {
         given:
-        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().buildAndStart()
         ConsulClient consulClient1 = new ConsulClient("localhost", consul1.httpPort)
-        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().buildAndStart()
         ConsulClient consulClient2 = new ConsulClient("localhost", consul2.httpPort)
         ConsulTestWaiter consulWaiter1 = new ConsulTestWaiter("localhost", consul1.httpPort)
         ConsulTestWaiter consulWaiter2 = new ConsulTestWaiter("localhost", consul2.httpPort)
@@ -36,21 +38,21 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
                 .withBind("127.0.0.1")
                 .withClient("127.0.0.1")
                 .withAdvertise("127.0.0.1")
-                .build().start()
+                .buildAndStart()
         ConsulClient consulClient1 = new ConsulClient("127.0.0.1", consul1.httpPort)
         ConsulProcess consul2 = ConsulStarterBuilder.consulStarter()
                 .withHttpPort(consul1.httpPort)
                 .withBind("127.0.0.10")
                 .withClient("127.0.0.10")
                 .withAdvertise("127.0.0.10")
-                .build().start()
+                .buildAndStart()
         ConsulClient consulClient2 = new ConsulClient("127.0.0.10", consul2.httpPort)
         ConsulProcess consul3 = ConsulStarterBuilder.consulStarter()
                 .withHttpPort(consul2.httpPort)
                 .withBind("127.0.0.11")
                 .withClient("127.0.0.11")
                 .withAdvertise("127.0.0.11")
-                .build().start()
+                .buildAndStart()
         ConsulClient consulClient3 = new ConsulClient("127.0.0.11", consul3.httpPort)
 
         then:
@@ -66,9 +68,9 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
 
     def "reset should not remove data from another process"() {
         given:
-        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul1 = ConsulStarterBuilder.consulStarter().buildAndStart()
         ConsulClient consulClient1 = new ConsulClient("localhost", consul1.httpPort)
-        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().build().start()
+        ConsulProcess consul2 = ConsulStarterBuilder.consulStarter().buildAndStart()
         ConsulClient consulClient2 = new ConsulClient("localhost", consul2.httpPort)
         ConsulTestWaiter consulWaiter1 = new ConsulTestWaiter("localhost", consul1.httpPort)
         ConsulTestWaiter consulWaiter2 = new ConsulTestWaiter("localhost", consul2.httpPort)

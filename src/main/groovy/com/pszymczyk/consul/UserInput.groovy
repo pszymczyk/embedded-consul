@@ -22,8 +22,9 @@ class UserInput {
     final String bind
     final String token
     final Integer waitTimeout
+    final Set<Service> services
 
-    UserInput(Path dataDir, Path downloadDir, Path configDir, String consulVersion, CustomConfig customConfig, LogLevel logLevel, Logger customLogger, ConsulPorts.ConsulPortsBuilder consulPorts, String startJoin, String advertise, String client, String bind, String token, Integer waitTimeout) {
+    UserInput(Path dataDir, Path downloadDir, Path configDir, String consulVersion, CustomConfig customConfig, LogLevel logLevel, Logger customLogger, ConsulPorts.ConsulPortsBuilder consulPorts, String startJoin, String advertise, String client, String bind, String token, Integer waitTimeout, Set<Service> services) {
         this.dataDir = dataDir
         this.downloadDir = downloadDir
         this.configDir = configDir
@@ -38,6 +39,7 @@ class UserInput {
         this.bind = bind
         this.token = token
         this.waitTimeout = waitTimeout
+        this.services = services
     }
 
     private ConsulPorts mergePorts(ConsulPorts.ConsulPortsBuilder ports) {

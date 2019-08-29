@@ -1,5 +1,6 @@
 package com.pszymczyk.consul.infrastructure.client
 
+import com.pszymczyk.consul.Service
 import groovy.transform.PackageScope
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
@@ -36,6 +37,21 @@ class SimpleConsulClient {
                 .findAll({ it -> it != 'consul' })
     }
 
+    void register(Service service) {
+        http.put(path: "/v1/agent/service/register", contentType: ContentType.JSON, body: getBody(service))
+    }
+
+    private static def getBody(Service service) {
+        def body = [Name: service.name]
+        if (service.address != null) {
+            body.Address = service.address
+        }
+        if (service.port != null) {
+            body.Port = service.port
+        }
+        body
+    }
+
     void deregister(String id) {
         http.put(path: "/v1/agent/service/deregister/$id", contentType: ContentType.ANY)
     }
@@ -49,7 +65,7 @@ class SimpleConsulClient {
 
         response.getData().each {
             def id = it.ID
-            http.put(path: "/v1/session/destroy/$id", contentType:  ContentType.ANY)
+            http.put(path: "/v1/session/destroy/$id", contentType: ContentType.ANY)
         }
     }
 

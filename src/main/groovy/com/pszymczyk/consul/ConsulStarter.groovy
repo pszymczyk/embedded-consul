@@ -63,6 +63,8 @@ class ConsulStarter {
         consulWaiter.awaitUntilConsulStarted()
         logger.info("Consul process started")
 
+        userInput.services.each { consulClient.register(it) }
+
         return process
     }
 
