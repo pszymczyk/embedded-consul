@@ -1,6 +1,6 @@
 # Embedded Consul
 
-Embedded Consul provides easy way to run Consul (by HashiCorp) in integration tests.
+Embedded Consul provides easy way to run Consul in integration tests.
 
 [![Build Status](https://travis-ci.org/pszymczyk/embedded-consul.svg?branch=master)](https://travis-ci.org/pszymczyk/embedded-consul)
 
@@ -101,7 +101,7 @@ class IntegrationTest {
 }
 ```
 
-The extension can also be registered via `@ExtendWith` annotation and provided to test as a method argument
+The extension can also be registered via `@ExtendWith` annotation and provided to test as a method argument.
 
 ```java
 @ExtendWith(ConsulExtension.class)
@@ -143,7 +143,7 @@ public class IntegrationTest {
 
 ### Register Services
 
-You can automatically register Services in Consul via `ConsulStarterBuilder`:
+You can automatically register Services in Consul via `ConsulStarterBuilder`.
 ```java
     
     ConsulStarterBuilder.consulStarter()
@@ -177,7 +177,7 @@ Invoking `reset` method is faster than starting new Consul process.
 
 ### Passing custom configuration
 
-If you want to pass custom property which is not covered by ConsulBuilder you can pass JSON configuration:
+If you want to pass custom property which is not covered by `ConsulStartrBuilder` you can pass JSON configuration.
 
 ```java
 
@@ -197,7 +197,7 @@ configuration (with highest priority).
 
 ### Changing download directory
 
-An environment variable can be set to change the consul CDN:
+An environment variable can be set to change the consul CDN.
 
 ```bash
 # default
@@ -240,7 +240,7 @@ At the moment files are not deleted!.
 ### Simultaneous running
 
 Embedded Consul overrides all default [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports).
-Ports are randomized so it's possible to run multiple Consul Agent instances in single machine.
+Ports are randomized so it's possible to run multiple Consul Agents in single machine.
 Configuration file is stored in `/$tmp/embedded-consul-config-dir$randomNumber/basic_config.json`, sample content:
 
 ```javascript
