@@ -21,7 +21,7 @@ Working on all operating systems: Mac, Linux, Windows.
 ```
 
 ```groovy
-    testCompile 'com.pszymczyk.consul:embedded-consul:2.1.4'
+    testImplementation 'com.pszymczyk.consul:embedded-consul:2.1.4'
 ```
 
 ### Usage
