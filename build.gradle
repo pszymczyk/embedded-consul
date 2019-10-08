@@ -50,6 +50,12 @@ dependencies {
 
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'org.apache.httpcomponents:httpclient:4.5.5'
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '5.6'
 }

@@ -7,7 +7,6 @@ import com.jayway.awaitility.groovy.AwaitilityTrait
 import spock.lang.Requires
 import spock.lang.Specification
 
-@Requires({ os.linux })
 class MultipleProcessesTest extends Specification implements AwaitilityTrait {
 
     def "should run multiple Consul processes simultaneously"() {
@@ -32,6 +31,7 @@ class MultipleProcessesTest extends Specification implements AwaitilityTrait {
         consul2.close()
     }
 
+    @Requires({ os.linux })
     def "should run multiple Consul processes with same port simultaneously"() {
         when:
         ConsulProcess consul1 = ConsulStarterBuilder.consulStarter()
