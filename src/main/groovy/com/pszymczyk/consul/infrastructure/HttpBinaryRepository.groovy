@@ -15,7 +15,8 @@ class HttpBinaryRepository {
         String os = OsResolver.resolve()
         String cdn = System.getenv(CONSUL_BINARY_CDN) != null ? System.getenv(CONSUL_BINARY_CDN)
                 : System.getProperty(CONSUL_BINARY_CDN) != null ? System.getProperty(CONSUL_BINARY_CDN) : CONSUL_DEFAULT_CDN;
-        String url = "${cdn}${version}/consul_${version}_${os}_amd64.zip"
+        String ARCH = ( (System.getProperty('os.arch')).equals("aarch64") == true ? "arm64" : "amd64" )
+        String url = "${cdn}${version}/consul_${version}_${os}_${ARCH}.zip"
         OutputStream outputStream = file.newOutputStream()
         outputStream << new URL(url).openStream()
         outputStream.close()
