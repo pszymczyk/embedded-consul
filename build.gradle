@@ -10,13 +10,18 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'groovy'
     id 'pl.allegro.tech.build.axion-release' version '1.12.0'
     id 'java-library'
     id 'maven-publish'
     id 'signing'
+}
+
+scmVersion {
+    tag {
+        prefix = 'embedded-consul'
+    }
 }
 
 project.group = 'com.pszymczyk.consul'
