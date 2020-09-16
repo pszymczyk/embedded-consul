@@ -1,10 +1,9 @@
 package com.pszymczyk.consul
 
 import com.ecwid.consul.v1.ConsulClient
-import com.jayway.awaitility.groovy.AwaitilityTrait
 import spock.lang.Specification
 
-class AttachToProcessTest extends Specification implements AwaitilityTrait {
+class AttachToProcessTest extends Specification {
 
     def "should attach to other process"() {
         when:
