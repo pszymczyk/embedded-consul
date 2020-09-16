@@ -9,7 +9,7 @@ import com.pszymczyk.consul.infrastructure.client.ConsulClientFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
-import static com.jayway.awaitility.Awaitility.await
+import static org.awaitility.Awaitility.await
 
 
 class ConsulTestWaiter extends ConsulWaiter {

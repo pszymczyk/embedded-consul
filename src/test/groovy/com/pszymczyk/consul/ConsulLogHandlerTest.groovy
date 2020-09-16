@@ -1,6 +1,5 @@
 package com.pszymczyk.consul
 
-import com.jayway.awaitility.Awaitility
 import org.hamcrest.Matchers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,6 +9,8 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+
+import static org.awaitility.Awaitility.await
 
 class ConsulLogHandlerTest extends Specification {
 
@@ -47,7 +48,7 @@ class ConsulLogHandlerTest extends Specification {
         logger.debug("testCase: {}", testCase)
         writer.println(testCase)
         writer.flush()
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilTrue(logged)
+        await().atMost(10, TimeUnit.SECONDS).untilTrue(logged)
 
         then:
         1 * mockLogger.debug("Skipping remote check \"serfHealth\" since it is managed automatically") >> { args -> logged.set(true) }
@@ -63,7 +64,7 @@ class ConsulLogHandlerTest extends Specification {
         logger.debug("testCase: {}", testCase)
         writer.println(testCase)
         writer.flush()
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilTrue(logged)
+        await().atMost(10, TimeUnit.SECONDS).untilTrue(logged)
 
         then:
         1 * mockLogger.info("==> Starting Consul agent...") >> { args -> logged.set(true) }
@@ -99,7 +100,7 @@ class ConsulLogHandlerTest extends Specification {
         logger.debug("testCase: {}", testCase)
         writer.print(testCase)
         writer.flush()
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+        await().atMost(10, TimeUnit.SECONDS)
             .untilAtomic(loggedCount, Matchers.equalTo(expectedSize))
 
         then:

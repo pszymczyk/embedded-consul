@@ -1,9 +1,7 @@
 language: groovy
 
 jdk:
-  - oraclejdk8
-
-dist: precise
+  - openjdk8
 
 script:
   - "./gradlew check"

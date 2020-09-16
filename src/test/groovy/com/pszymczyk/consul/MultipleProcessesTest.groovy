@@ -3,11 +3,10 @@ package com.pszymczyk.consul
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams
 import com.ecwid.consul.v1.agent.model.NewService
-import com.jayway.awaitility.groovy.AwaitilityTrait
 import spock.lang.Requires
 import spock.lang.Specification
 
-class MultipleProcessesTest extends Specification implements AwaitilityTrait {
+class MultipleProcessesTest extends Specification {
 
     def "should run multiple Consul processes simultaneously"() {
         given:

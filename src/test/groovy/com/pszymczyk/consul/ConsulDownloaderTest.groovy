@@ -6,11 +6,16 @@ class ConsulDownloaderTest extends Specification {
 
     def osName = System.getProperty("os.name")
 
+    ConsulStarter starter
+
+    def setup() {
+        starter = ConsulStarterBuilder.consulStarter().build()
+    }
+
     def cleanup() {
         System.setProperty("os.name", osName)
     }
 
-    private final ConsulStarter starter = ConsulStarterBuilder.consulStarter().build()
 
     def "should provide proper consul binary for windows"() {
         given:
