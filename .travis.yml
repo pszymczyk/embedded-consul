@@ -2,6 +2,8 @@ language: groovy
 
 jdk:
   - openjdk8
+  - openjdk11
+  - openjdk15
 
 script:
   - "./gradlew check"
