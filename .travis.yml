@@ -1,9 +1,42 @@
 language: groovy
 
-jdk:
-  - openjdk8
-  - openjdk11
-  - openjdk15
+install:
+  # Secrets (including encrypted PGP key) are not available in PR - skip release configuration to do not fail build
+  - |
+    if [ "$TRAVIS_SECURE_ENV_VARS" == "true" ]; then
+      # There is problem with aborting build on command in if failure - http://steven.casagrande.io/articles/travis-ci-and-if-statements/
+      openssl aes-256-cbc -K $encrypted_99b975bee07f_key -iv $encrypted_99b975bee07f_iv -in gradle/gpg-key.asc.enc -d | gpg --fast-import || travis_terminate 1
+      export GRADLE_OPTS='-Dorg.gradle.project.signing.keyId=56FF414A -Dorg.gradle.project.signing.secretKeyRingFile=$HOME/.gnupg/secring.gpg -Dorg.gradle.project.signing.password=$PGP_SIGNING_PASSWORD'
+    fi;
+  - "export TRAVIS_COMMIT_MSG=$(git log --format=%B -n 1 $TRAVIS_COMMIT)"
+  - git config user.email "szpak-ci@users.noreply.github.com"
+  - git config user.name "Szpak CI Bot"
+  # Chandler for release notes synchronization
+  - ruby --version
+  - rvm install 2.4.1
+  - ruby --version
+  - gem install --no-document chandler -v 0.7.0
 
 script:
-  - "./gradlew check"
+  - ./gradlew prepareForCiBuild -s -i -Prelease.disableChecks && ./gradlew ciBuild -s -i -Prelease.disableChecks -PchangelogSync
+
+env:
+  global:
+  # GH_TOKEN
+  - secure: Bdn80ubDnvxQUAEC/hcZQyJ+aqQBrpF7ISr2Z5Oj7v+1PiTXaGI4zE/VXTiZTNPuMGkD5tyFdgQFxyG3NYujJfkZwJ9GluntO3er1nwMSTJCXE8IvFCAfRKM4HAX+pkVBg+WjNnR5UYOZi6l0Z51kELAtS+6u5QAkqFTYrS2s6YaNCGrUwed5VfGdFNKZconaAW3PA1+2B5Gdr4duCNAqlcupQ5wwonbGs+toVtGwZC+ketTvohEEY2kFzlXP0m0cXmCTIvKv/SsD/APeuBgW6iZ25jyB007Y9cF9r4ZvV6Uv7EVfzHiLQm/BjAseEPwfPj43qFoS8vegqTh3st0JOHfRTHAHGTyWJbesaIlIQR5tQ9PwKphv+3iMpXdcSI+xNguaFSjIfm5zYk363urMSH0FvBecFT6JxjTnZQ6QvF46QPyxhk+jQDyrLPQuwtvOWjB0hS2FE//4LY65+NzCYzY7uWmwkyVmVslw7oTZ0Y5+tPkycoPO55aNXi/IPbpu47JoMYgh7VtWfUE7wqqNWkM1A7jXXNAam9HeW+v1bzrgk6P4LbQcRXXnXZSNhR53vwMTjUzKQyqDmSnZTqOl0c/ysuu3nrEY5qDliK9lPYf9vNAMKVwN6qaq1n48UMCmzDl/iKnt/AX2sjSxIwbNS3Y8cw5XIli96q/jkUc9sU=
+  # ORG_GRADLE_PROJECT_nexusUsername
+  - secure: EGySjNrHjPoKldUWTu1Df5COxTJO0sF/0xoSq3XNVn50ZaNAGGVCEwtc+PwlUctFgqiqlaAySfauK3jyBuLgZKm7CfoyubW40WjSpbco/2iifIAy7oI8uqgKBb5G7u7tMR7v20/LWjsOKz7g3fdXG0ixl04/NEXhLmlMCGCuMeN6Fyi2f60ZTfvc9UVMhq+f0vgoNuLd+l6op/L88sitSI1gWfnhONvsAgACl+zn10l7rPyTyWzz9qJtJ0ycG2EhTX3jp1beF3ssnQobktAgYRex4JQ8zpzqWvr8qsGWDGkC+CWF3nSWZ+bszbwLtdKn/cCScUx1fzd8xyXQoIQiHiYME1sFE6YY/rBJ4FDMHKm1zDm+DF7Hi2GLhCteAdZmTbnsfg+pa92pLGA9PP3ADHnfkiBfRTwuuQCFxXhFCDQAPZoQmV2mzBXciosccw2oPwOzMd7Nz2eDYbTRhdMvwc27DeGOPtOw9kDKuXxIpF7eQKJIUu4HHG4GZPd9UZyZL1s66gu/zhqCQfpaYuSBqr9v8+8cJ1iSM0isC2/jYGWsWEaiskirrwDBdhkbpp41lbKMqc8djexQgMFUSkBL9rVWTLvixVB82WZhepTABI/6ihObAVpImJMaV4B1w9rdGkQBw9yI+U8nK8pOdMN/hnVJrUi85KxaCY1+3Y/EPMA=
+  # ORG_GRADLE_PROJECT_nexusPassword
+  - secure: GnKDLkEOpISd5Ffp6i3t13/P19UqPKYrujo2oRVPOBZ1O64J8VxlMVbJzBZbQnPTvYoTHztJuRnFMRCHvlM1LnLDQOAje+XulGR7Zy3URe4kOKqvssjllmmo6kYRsfFwOtA2k3s/SwC1krg7caLtyBNVt2FTmto0i2I15JXY52078EkYuglx7Zq1Sd4Bdl0w0BM0/Lupe+Sj1SBKDIMkAZeBxWv7WXK+JZxQIvqrQgf8Wb49MYC/trocjao6Frw+6NT7vZ3mOFfaubMrLEuOjKuW8aAHgykAq0a6Iguu9vr0W4nW8Ev2LvcEkKD0T04K5bmBrlBbNnfR9soVyU81ZcUeZ1ekmcfPdBfSG95tyloxbvZrIzO4duIT50d33E8SqN/bES3aO5eaBdLbVZscl5HAzquZjZZrDC1r/FVa074iovMK+3vpXJxmLEiZ+LZxWZeiyFjybjV3Z2L3z70iXj+F7LLn52BWZAt42nCc87lDMXuownFOHlsrwHMqoSxaNEuUPLQUMaS2UKsx6+TptawxgLyVB6N9f8wbIsuMvP067VwANkcVqA48irKL7sDZR1/Mb4lYdfrX2SR7xrrBcstmRTz1P1060UbQGe00KoArQnX7VVEsLiS7WUdoLvYj4+OO9y27CorawNvpSMhx3IgILp+HFb6fXZEVSMY64mE=
+  # CHANDLER_GITHUB_API_TOKEN
+  - secure: N6UBA7PUSBTgYnQzuQUZN01yozG4pPGqsScersHBS5q9qOcYszsc5hVnzRUoo30RrWGCzTZMQrsNUHPnS38DPSDar9r150IpmaVi0WKzaDIPxoujqPaduqawxJ0FTJl2jrYa8G324MNDeRl/xyQUNaQXZrMHlQu7oI5wXhDGIR+tuKNFN+v46CYAz99vAcDWqVhPrby0LCnNieRNZAAPicYC80dOlcUf0f49n1Yv5TbX9DOVrAv03YWQjy59gRe2eeUYA7kXt2TCKvrHfvmoP5rpUbEgL84SSGQvwb6rTjR+rguZfmLC625fVgow3I5BOZVSiJ9h0KGjOCBoS9WXmCnTJo2hoeCVVeavxwMXdAa2ZQ8033/H4qPO6Tuowmzpeg+jytCvd3EnKzgcJLW8ycfay8c/1wK/Xc2sDs07UoQdJmeGrNfA4E77CTQ3GFEnC4GcyAQtLf2bW3t2+AmgHf37Rm56/Px1Sh8eQuemEMzqQlE1OL8nVbNMn19nhkCqIoB74KfecLFBz1f///zO2X5UyCyri/35VwQEI+PL1l/GRPo6mvU/oBSSO7rdlCSb9nNJjpSCOaF4vBHhaYHKm9NbFpmwRtGHpCxjHu57cJlMq7jLeXYmz0Pbp/+FKtI6gQK+UW27AsugLbCTSAbMr9F26pyKpVgTEAr74/yKwjg=
+  # PGP_SIGNING_PASSWORD
+  - secure: Z8UYUXe/TkoPjP0hIkTHkIxln4rxqtNROhIzqBHtDNYpp1R4wsFSOm3aEEasQQWpG5E6GKPfMC/b1N/nUrFot+iBlC/ZfA/Qvvp3gmbCeObxdzEutqivhl8ugh4iRmatShDsF5z4/mNx9s50A24m1fGL4GS8SlJ0CK3XGbnOhZhwl+16VfCxOv5aUQfq9tvJDL8CZw7gan4rGFpKZYYdrjyr7vW5gpwaE1RX5ut2TNQRGUULsNBTU7LdZFoeXIGUWJrLOBg9kEPof4ZiCzBo/xySlPTIgdbbdq+u3Hkj2QYNPHQ98R6ggllhyRjUWgt6qD0i+ZkGfujfuIOHbOKimdHU461kEgSgIgHVTtO5+u7Zb9VbO57mLkzDJlCY/48ITBCLmQY0t778DzM97r9Vyf8Uw0459vagvKYDqoulZI/ofMUiWYsQL9HdF+C+lkQVOBBOYzqo23ZlhRxG0G/9Ksb+trSEj0Ey4DhaiXLkiN3Yv9Ybj82LowN4l96U3rqRw0oq6rcoEMseh7GG7kketE3xvO2PZupgqwc1vWqLrv85pKHGHifvPmXOusEJFhxilQwkyh+oaxY80hkVBJrblKHyoWHr1cj0d5JzZexlBcZ4apn6/kTTrwxkkf7utttWxru/zO6I8oW+It3AAmJ6SlLbRhQq7SV87Dq/Faua4qc=
+
+matrix:
+  include:
+    - jdk: openjdk8
+    - jdk: openjdk11
+      env: SKIP_RELEASE=true
+    - jdk: openjdk15
+      env: SKIP_RELEASE=true
