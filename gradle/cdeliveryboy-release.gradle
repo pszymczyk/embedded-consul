@@ -70,6 +70,18 @@ modifyPom {
     }
 }
 
+tasks.withType(Upload).configureEach {
+    String projectVersion = project.version as String
+    //Workaround on https://github.com/szpak/CDeliveryBoy/issues/3 - do not upload snapshots from other Java versions
+    if (projectVersion.endsWith("-SNAPSHOT") && System.env.SKIP_RELEASE == "true") {
+        onlyIf { false }
+    }
+    //Workaround on https://github.com/szpak/CDeliveryBoy/issues/13 - do not upload artifacts on extra build (e.g. from cron) from release tag
+    if (!projectVersion.endsWith("-SNAPSHOT") && !ciBuild.inReleaseMode) {
+        onlyIf { false }
+    }
+}
+
 if (hasProperty('changelogSync')) {
 
     task syncChangelog(type: Exec) {
