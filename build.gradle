@@ -31,8 +31,12 @@ repositories {
     mavenCentral()
 }
 
+ext.groovyVersion = '2.5.13'
+
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.13'
+    compile "org.codehaus.groovy:groovy:$groovyVersion"
+    compile "org.codehaus.groovy:groovy-json:$groovyVersion"
+    compile "org.codehaus.groovy:groovy-ant:$groovyVersion"
     compile 'org.apache.ant:ant:1.10.8'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     compile 'org.slf4j:slf4j-api:1.7.30'
