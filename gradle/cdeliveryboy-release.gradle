@@ -9,7 +9,7 @@ cDeliveryBoy {
         promoteRepositoryTask = 'releaseRepository'
     }
     nexus {
-        autoPromote = false //TODO: To be enabled after first successful half-automatic production release
+        autoPromote = true
     }
 }
 
