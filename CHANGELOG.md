@@ -1,5 +1,9 @@
 # embedded-consul changelog
 
+## 2.2.1 - Unreleased
+
+ - ...
+
 ## 2.2.0 - 2020-09-23
 
  - mass dependency update (including reduced set of provided Groovy dependencies) - [#100](https://github.com/pszymczyk/embedded-consul/pull/100), [#102](https://github.com/pszymczyk/embedded-consul/pull/102)
