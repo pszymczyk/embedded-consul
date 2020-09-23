@@ -77,9 +77,9 @@ tasks.withType(Upload).configureEach {
         onlyIf { false }
     }
     //Workaround on https://github.com/szpak/CDeliveryBoy/issues/13 - do not upload artifacts on extra build (e.g. from cron) from release tag
-    if (!projectVersion.endsWith("-SNAPSHOT") && !ciBuild.inReleaseMode) {
-        onlyIf { false }
-    }
+    //if (!projectVersion.endsWith("-SNAPSHOT") && !ciBuild.inReleaseMode) {
+    //    onlyIf { false }
+    //}
 }
 
 if (hasProperty('changelogSync')) {
