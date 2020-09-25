@@ -3,7 +3,7 @@
 Embedded Consul provides easy way to run Consul in integration tests.
 
 [![Build Status](https://travis-ci.org/pszymczyk/embedded-consul.svg?branch=master)](https://travis-ci.org/pszymczyk/embedded-consul)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.pszymczyk.consul/embedded-consul/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.pszymczyk.consul/embedded-consul/)
 
 Built on Consul 1.8.4 <br />
 Compatible with jdk1.8+. <br />
