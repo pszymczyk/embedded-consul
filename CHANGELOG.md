@@ -2,7 +2,7 @@
 
 ## 2.2.1 - Unreleased
 
- - ...
+ - bump default Consul version to 1.8.4
 
 ## 2.2.0 - 2020-09-23
 
