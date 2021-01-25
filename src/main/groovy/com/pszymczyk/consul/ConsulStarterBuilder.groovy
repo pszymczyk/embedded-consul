@@ -28,6 +28,7 @@ class ConsulStarterBuilder {
     private String client = "127.0.0.1"
     private String token
     private Integer waitTimeout
+    private boolean disableAddingShutdownHook = false
 
     private ConsulStarterBuilder() {
 
@@ -113,6 +114,11 @@ class ConsulStarterBuilder {
         this
     }
 
+    ConsulStarterBuilder disableAddingShutdownHook() {
+        this.disableAddingShutdownHook = true;
+        this
+    }
+
     ConsulStarterBuilder withService(Service... serviceName) {
         this.services.addAll(serviceName)
         this
@@ -138,6 +144,7 @@ class ConsulStarterBuilder {
                 bind,
                 token,
                 waitTimeout,
+                disableAddingShutdownHook,
                 services))
     }
 
