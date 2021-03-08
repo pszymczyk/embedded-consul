@@ -22,7 +22,7 @@ class ConsulProcess implements AutoCloseable {
     private final ConsulLogHandler consulLogHandler
 
     @PackageScope
-    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process, SimpleConsulClient simpleConsulClient, ConsulWaiter consulWaiter, ConsulLogHandler consulLogHandler) {
+    ConsulProcess(Path dataDir, ConsulPorts consulPorts, String address, Process process, SimpleConsulClient simpleConsulClient, ConsulWaiter consulWaiter, ConsulLogHandler consulLogHandler, boolean disableAddingShutdownHook) {
         this.dataDir = dataDir
         this.consulPorts = consulPorts
         this.address = address
@@ -30,7 +30,9 @@ class ConsulProcess implements AutoCloseable {
         this.simpleConsulClient = simpleConsulClient
         this.consulWaiter = consulWaiter
         this.consulLogHandler = consulLogHandler
-        addShutdownHook { this.process.destroyForcibly()}
+        if (!disableAddingShutdownHook) {
+            addShutdownHook { this.process.destroyForcibly() }
+        }
     }
     /**
      * Deregister all services except consul.
