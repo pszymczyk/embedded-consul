@@ -40,3 +40,7 @@ matrix:
       env: SKIP_RELEASE=true
     - jdk: openjdk15
       env: SKIP_RELEASE=true
+    - name: Linux aarch64
+      jdk: openjdk11
+      arch: arm64
+      env: SKIP_RELEASE=true
