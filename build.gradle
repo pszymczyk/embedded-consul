@@ -21,18 +21,19 @@ repositories {
     mavenCentral()
 }
 
-ext.groovyVersion = '2.5.13'
+ext.groovyVersion = '2.5.14'
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     compile "org.codehaus.groovy:groovy-json:$groovyVersion"
     compile "org.codehaus.groovy:groovy-ant:$groovyVersion"
+    compile "org.codehaus.groovy:groovy-xml:$groovyVersion"
     compile 'org.apache.ant:ant:1.10.8'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     compile 'org.slf4j:slf4j-api:1.7.30'
 
-    compileOnly 'junit:junit:4.13'
-    compileOnly 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    compileOnly 'junit:junit:4.13.2'
+    compileOnly 'org.junit.jupiter:junit-jupiter-api:5.7.1'
 
     testCompile 'ch.qos.logback:logback-classic:1.2.3'
     testCompile 'com.ecwid.consul:consul-api:1.4.5'
