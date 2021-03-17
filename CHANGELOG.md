@@ -3,6 +3,8 @@
 ## 2.2.1 - Unreleased
 
  - bump default Consul version to 1.8.6
+ - add Flag to Disable Addition of Shutdown Hook - [#113](https://github.com/pszymczyk/embedded-consul/pull/113/) - PR by [Eric Glass](https://github.com/ericnglass)
+ - restore `groovy-xml` dependency - [#114](https://github.com/pszymczyk/embedded-consul/pull/114) - PR by [Martin Grigorov](https://github.com/martin-g)
 
 ## 2.2.0 - 2020-09-23
 
