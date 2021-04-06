@@ -1,6 +1,6 @@
 # embedded-consul changelog
 
-## 2.2.1 - Unreleased
+## 2.2.1 - 2021-04-06
 
  - bump default Consul version to 1.8.6
  - add Flag to Disable Addition of Shutdown Hook - [#113](https://github.com/pszymczyk/embedded-consul/pull/113/) - PR by [Eric Glass](https://github.com/ericnglass)
