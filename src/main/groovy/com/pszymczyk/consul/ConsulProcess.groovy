@@ -59,6 +59,11 @@ class ConsulProcess implements AutoCloseable {
     int getHttpPort() {
         consulPorts.httpPort
     }
+    
+    
+    int getHttpsPort() {
+        consulPorts.httpsPort
+    }
 
     int getDnsPort() {
         consulPorts.dnsPort
