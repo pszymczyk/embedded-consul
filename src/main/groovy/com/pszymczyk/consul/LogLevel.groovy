@@ -6,7 +6,8 @@ enum LogLevel {
     DEBUG("debug"),
     INFO("info"),
     WARN("warn"),
-    ERR("err")
+    ERR("err"),
+    ERROR("error")
 
     final String value
 
