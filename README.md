@@ -1,3 +1,7 @@
+# Public archive
+
+Project has been deprecated in favour of [Testcontainers Hashicorp Consul Module](https://www.testcontainers.org/modules/consul/)
+
 # Embedded Consul
 
 Embedded Consul provides easy way to run Consul in integration tests.
