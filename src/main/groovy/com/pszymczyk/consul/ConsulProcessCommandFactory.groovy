@@ -52,6 +52,7 @@ class ConsulProcessCommandFactory {
                             "-client=$client",
                             "-log-level=$logLevel.value",
                             "-http-port=${consulPorts.httpPort}",
+                            "-https-port=${consulPorts.httpsPort}",
                             "-grpc-port=${consulPorts.grpcPort}"]
 
         if (bind != null) {
