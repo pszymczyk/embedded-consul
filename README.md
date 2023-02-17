@@ -199,14 +199,20 @@ ConsulProcess consul = ConsulStarterBuilder.consulStarter().withCustomConfig(cus
 Given JSON configuration will be saved in addition configuration file `extra_config.json` and processed after base
 configuration (with highest priority).
 
-### Changing download directory
+### Changing download location
 
-An environment variable can be set to change the consul CDN.
+An environment variable (or system property) can be set to change the consul CDN. Reminder of the  download url is calculated from OS, architecture and version automatically. 
 
 ```bash
 # default
 export CONSUL_BINARY_CDN=https://releases.hashicorp.com/consul/
 ```
+
+Or a full path can be specified using following environment variable (or system property of the same name) 
+```bash
+export CONSUL_BINARY_URL=https://releases.hashicorp.com/consul/1.12.2/consul_1.12.2_linux_amd64.zip
+```
+
 Proxy can be used if necessary.
 ```
 https.proxyHost=localhost 
